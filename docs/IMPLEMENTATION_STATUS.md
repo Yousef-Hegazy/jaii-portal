@@ -353,3 +353,106 @@ This is an acceptable trade-off for RTL-first applications where the majority of
 **Phase 4 — Font and Icon Foundation** (Model: DeepSeek v4 Flash)
 
 **No existing dependencies downgraded.** ✅
+
+---
+
+## Phase 4 — Font and Icon Foundation Results
+
+### Changed Files
+
+| File | Change |
+|------|--------|
+| `app/lib/typography.ts` | **Created** — Typography tokens, language-aware font stacks, MUI theme config generator |
+| `app/lib/providers.tsx` | **Modified** — Theme now includes language-aware typography via `createTypographyConfig()` |
+| `app/root.tsx` | **Modified** — Replaced Google Fonts Inter with self-hosted fontsource imports (Public Sans Variable + Tajawal) |
+| `app/routes/home.tsx` | **Modified** — Added typography proof section (all variants + token scale) and icon proof section (@iconify/react showcase) |
+| `package.json` | **Modified** — Added `@fontsource-variable/public-sans`, `@fontsource/tajawal`, `@iconify/react` |
+
+### Added/Updated Packages
+
+| Package | Version | Type | Notes |
+|---------|---------|------|-------|
+| `@fontsource-variable/public-sans` | ^5.2.7 | dependency | Self-hosted Public Sans Variable for English (weights 100-900) |
+| `@fontsource/tajawal` | ^5.2.7 | dependency | Self-hosted Tajawal for Arabic (weights 200-900) |
+| `@iconify/react` | ^6.0.2 | dependency | Single application icon layer (loads icons on demand from Iconify API) |
+
+### Architecture
+
+1. **Typography Tokens** (`app/lib/typography.ts`):
+   - `FONT_STACKS` — Defines `english` ("Public Sans Variable", "Public Sans", sans-serif) and `arabic` ("Tajawal", sans-serif)
+   - `getFontFamily(language)` — Returns appropriate font stack based on language
+   - `TYPOGRAPHY_SCALE` — Complete token scale for all typography variants (h1-h6, subtitle1/2, body1/2, caption, button, overline) with size, weight, line-height, and letter-spacing
+   - `createTypographyConfig(language)` — Builds a full MUI `TypographyVariantsOptions` object for use in `createTheme()`
+   - `NAVIGATION_FONT` — Convenience constant for navigation font properties
+
+2. **Font Loading** (`app/root.tsx`):
+   - `@fontsource-variable/public-sans/wght.css` — Variable font with weight axis only (smaller bundle)
+   - `@fontsource/tajawal` — Static font, all default weights
+   - Removed Google Fonts link (`<link href="https://fonts.googleapis.com/...">`) — fonts are now self-hosted
+   - Fonts appear in production build output as bundled `.woff2`/`.woff` assets
+
+3. **Theme Integration** (`app/lib/providers.tsx`):
+   - `ThemedProviders` now reads `language` from `DirectionContext` (was already available)
+   - Theme recreates when `language` changes, switching font family dynamically
+   - `createTypographyConfig(language)` provides complete variant configuration
+
+4. **Proof Section** (`app/routes/home.tsx`):
+   - Typography card: shows h1-h6 in context, body1/body2 with sample text, subtitle1/2, caption, overline, buttons, and a token scale table rendered as Chips
+   - Icon card: 8 dashboard-relevant icons in a grid, 4 colored icons, 2 icon Chips, all via `@iconify/react`
+
+### Language-Aware Font Switching
+
+- Arabic (`ar`): All text rendered in **Tajawal** — a clean, modern Arabic sans-serif
+- English (`en`): All text rendered in **Public Sans Variable** — the SPEC-specified Latin font
+- Switching language immediately updates the MUI theme typography (no reload)
+- Tailwind-specific and Google Fonts no longer loaded
+
+### Commands Run and Results
+
+```bash
+# Install fontsource fonts + @iconify/react
+pnpm add @fontsource-variable/public-sans @fontsource/tajawal @iconify/react
+# → Success: + @fontsource-variable/public-sans 5.2.7, @fontsource/tajawal 5.2.7, @iconify/react 6.0.2
+
+# Type generation + typecheck
+pnpm run typecheck
+# → Pre-existing @tanstack/react-query error only (Phase 29) — no new errors
+
+# Production build
+pnpm run build
+# → Success: client + SSR environments built; font assets bundled (Public Sans woff2/woff, Tajawal woff2/woff)
+```
+
+### Typecheck Status
+- `pnpm run typecheck` — **Only pre-existing failure (not caused by Phase 4):**
+  - `app/lib/queryClient.ts` — Cannot find module `@tanstack/react-query` (package not in `package.json`, Phase 29)
+- No new typecheck errors introduced by Phase 4.
+- Fixed MUI v9 import path issues (`@mui/material/styles/createTypography` → inline inference; `@mui/material/Grid2` → `@mui/material/Grid`).
+
+### Build Status
+- `pnpm run build` — **Passes** (client + SSR environments)
+- Font assets appear in both client and server build output:
+  - Public Sans Variable: 3 woff2 files (latin, latin-ext, vietnamese) ~7-27 KB each
+  - Tajawal: 2 woff2 + 2 woff files (arabic, latin) ~8-13 KB each
+
+### Verified Behavior
+- `/` route renders brand card + typography proof card + icon proof card + RTL proof components
+- Typography proof shows all 13 variants in the active font:
+  - Arabic: Tajawal (smooth RTL rendering)
+  - English: Public Sans Variable (clean modern sans-serif)
+- Language switch changes font face immediately (no page reload)
+- Iconify icons render from API: 8 dashboard icons, 4 colored status icons, 2 icon Chips
+- Token scale table shows all typography variants with their size/weight values
+- Active font family name displayed in the typography section header
+- All Phase 3 RTL/LTR behavior preserved
+
+### Limitations / Known Issues
+- Iconify icons load from the Iconify CDN — requires internet access for icon rendering (icons are not bundled locally)
+- Tajawal is loaded as a static font (not variable) — each weight is a separate file, but only weight 400 is imported (the default import). Additional weights can be imported as needed in later phases
+- `@tanstack/react-query` module-not-found in `queryClient.ts` remains as a pre-existing issue (Phase 29)
+- Hydration warning when persisted language is English (expected, acceptable, from Phase 3)
+
+### Next Phase
+**Phase 5 — Base MUI Theme Anatomy** (Model: GLM-5)
+
+**No existing dependencies downgraded.** ✅

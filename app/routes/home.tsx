@@ -12,7 +12,12 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
+import Grid from "@mui/material/Grid";
+import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
+import { Icon } from "@iconify/react";
 import { useState } from "react";
+import { TYPOGRAPHY_SCALE, getFontFamily } from "../lib/typography";
 
 import type { Route } from "./+types/home";
 
@@ -37,16 +42,32 @@ export default function Home() {
   const handleDialogOpen = () => setDialogOpen(true);
   const handleDialogClose = () => setDialogOpen(false);
 
+  const fontFamily = getFontFamily(currentLang);
+
+  // Sample icons to showcase
+  const iconSet = [
+    { icon: "mdi-light:home", label: "Home" },
+    { icon: "mdi:shopping-outline", label: "Orders" },
+    { icon: "mdi:account-outline", label: "Account" },
+    { icon: "mdi:chart-line", label: "Analytics" },
+    { icon: "mdi:truck-delivery-outline", label: "Delivery" },
+    { icon: "mdi:cog-outline", label: "Settings" },
+    { icon: "mdi:bell-outline", label: "Notifications" },
+    { icon: "mdi:map-marker-outline", label: "Zones" },
+  ];
+
   return (
     <Box
       sx={{
         minHeight: "100vh",
         display: "flex",
+        flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
         p: 2,
+        gap: 3,
       }}
     >
+      {/* ── Brand Card ── */}
       <Card sx={{ maxWidth: 560, width: "100%" }}>
         <CardContent sx={{ textAlign: "center", py: 6, px: 4 }}>
           <Typography variant="h4" component="h1" gutterBottom>
@@ -90,7 +111,155 @@ export default function Home() {
         </CardContent>
       </Card>
 
-      {/* RTL/LTR Proof Section — Dialog and TextField */}
+      {/* ── Typography Proof Section ── */}
+      <Card sx={{ maxWidth: 720, width: "100%" }}>
+        <CardContent sx={{ py: 4, px: 4 }}>
+          <Typography variant="overline" color="text.secondary" sx={{ mb: 2, display: "block" }}>
+            {currentLang === "ar" ? "الطباعة" : "Typography"} — {currentLang === "ar" ? "الخط الحالي" : "Active font"}: {fontFamily}
+          </Typography>
+
+          <Stack spacing={2} sx={{ mt: 2 }}>
+            {/* Headings */}
+            <Box sx={{ borderBottom: 1, borderColor: "divider", pb: 1, mb: 1 }}>
+              <Typography variant="caption" color="text.secondary">
+                {currentLang === "ar" ? "العناوين" : "Headings"}
+              </Typography>
+            </Box>
+            <Typography variant="h1">h1 — {currentLang === "ar" ? "مرحباً بكم في جايي" : "Welcome to Jaii"}</Typography>
+            <Typography variant="h2">h2 — {currentLang === "ar" ? "لوحة التحكم" : "Dashboard"}</Typography>
+            <Typography variant="h3">h3 — {currentLang === "ar" ? "إدارة الطلبات" : "Order Management"}</Typography>
+            <Typography variant="h4">h4 — {currentLang === "ar" ? "تحليلات الأداء" : "Performance Analytics"}</Typography>
+            <Typography variant="h5">h5 — {currentLang === "ar" ? "إعدادات المتجر" : "Store Settings"}</Typography>
+            <Typography variant="h6">h6 — {currentLang === "ar" ? "تفاصيل العميل" : "Customer Details"}</Typography>
+
+            {/* Body */}
+            <Box sx={{ borderBottom: 1, borderColor: "divider", pb: 1, mb: 1, mt: 3 }}>
+              <Typography variant="caption" color="text.secondary">
+                {currentLang === "ar" ? "النصوص" : "Body Text"}
+              </Typography>
+            </Box>
+            <Typography variant="body1">
+              body1 — {currentLang === "ar"
+                ? "هذا هو النص الأساسي المستخدم في المحتوى الرئيسي للصفحات. جايي هي منصة غسيل الملابس الرائدة في المملكة العربية السعودية."
+                : "This is the primary body text used for main page content. Jaii is the leading laundry platform in Saudi Arabia."}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              body2 — {currentLang === "ar"
+                ? "هذا هو النص الثانوي بحجم أصغر، يُستخدم في التفاصيل والملاحظات والتوضيحات الإضافية."
+                : "This is secondary body text at a smaller size, used for details, notes, and additional explanations."}
+            </Typography>
+
+            {/* Subtitles */}
+            <Box sx={{ borderBottom: 1, borderColor: "divider", pb: 1, mb: 1, mt: 3 }}>
+              <Typography variant="caption" color="text.secondary">
+                {currentLang === "ar" ? "العناوين الفرعية" : "Subtitles"}
+              </Typography>
+            </Box>
+            <Typography variant="subtitle1">
+              subtitle1 — {currentLang === "ar" ? "معلومات الحساب" : "Account Information"}
+            </Typography>
+            <Typography variant="subtitle2">
+              subtitle2 — {currentLang === "ar" ? "آخر نشاط: منذ ٣ ساعات" : "Last activity: 3 hours ago"}
+            </Typography>
+
+            {/* Caption / Overline / Button */}
+            <Box sx={{ borderBottom: 1, borderColor: "divider", pb: 1, mb: 1, mt: 3 }}>
+              <Typography variant="caption" color="text.secondary">
+                {currentLang === "ar" ? "تذييل وأزرار" : "Caption, Overline & Button"}
+              </Typography>
+            </Box>
+            <Typography variant="caption">
+              caption — {currentLang === "ar" ? "تم التحديث منذ ٥ دقائق" : "Updated 5 minutes ago"}
+            </Typography>
+            <Typography variant="overline" color="text.secondary">
+              overline — {currentLang === "ar" ? "قسم الإحصائيات" : "STATISTICS SECTION"}
+            </Typography>
+            <Box sx={{ display: "flex", gap: 2, alignItems: "center", flexWrap: "wrap" }}>
+              <Button variant="contained">
+                {currentLang === "ar" ? "زر أساسي" : "Primary Button"}
+              </Button>
+              <Button variant="outlined">
+                {currentLang === "ar" ? "زر ثانوي" : "Secondary Button"}
+              </Button>
+              <Button size="small">
+                {currentLang === "ar" ? "صغير" : "Small"}
+              </Button>
+            </Box>
+
+            {/* Scale table */}
+            <Box sx={{ borderBottom: 1, borderColor: "divider", pb: 1, mb: 1, mt: 3 }}>
+              <Typography variant="caption" color="text.secondary">
+                {currentLang === "ar" ? "جدول القياسات" : "Token Scale (px)"}
+              </Typography>
+            </Box>
+            <Grid container spacing={1} sx={{ fontSize: "13px" }}>
+              {Object.entries(TYPOGRAPHY_SCALE).map(([variant, token]) => (
+                <Grid key={variant} size={{ xs: 6, sm: 4 }}>
+                  <Chip
+                    label={`${variant}: ${token.size}px / w${token.weight}`}
+                    size="small"
+                    variant="outlined"
+                    sx={{ width: "100%", justifyContent: "flex-start", fontFamily: "inherit" }}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </Stack>
+        </CardContent>
+      </Card>
+
+      {/* ── Icon Proof Section ── */}
+      <Card sx={{ maxWidth: 720, width: "100%" }}>
+        <CardContent sx={{ py: 4, px: 4 }}>
+          <Typography variant="overline" color="text.secondary" sx={{ mb: 2, display: "block" }}>
+            {currentLang === "ar" ? "الأيقونات" : "Icons"} — @iconify/react
+          </Typography>
+
+          <Grid container spacing={2} sx={{ mt: 1 }}>
+            {iconSet.map(({ icon, label }) => (
+              <Grid
+                key={icon}
+                size={{ xs: 3, sm: 2 }}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 0.5,
+                  p: 1.5,
+                  borderRadius: 1,
+                  "&:hover": { backgroundColor: "action.hover" },
+                }}
+              >
+                <Icon icon={icon} width={28} height={28} />
+                <Typography variant="caption" color="text.secondary" sx={{ fontSize: "11px" }}>
+                  {label}
+                </Typography>
+              </Grid>
+            ))}
+          </Grid>
+
+          <Box sx={{ display: "flex", gap: 2, alignItems: "center", flexWrap: "wrap", mt: 3 }}>
+            <Icon icon="mdi:check-circle" width={24} height={24} color="#00A76F" />
+            <Icon icon="mdi:alert-circle" width={24} height={24} color="#FF3030" />
+            <Icon icon="mdi:star" width={24} height={24} color="#FDA92D" />
+            <Icon icon="mdi:information" width={24} height={24} color="#078DEE" />
+            <Chip
+              icon={<Icon icon="mdi:refresh" width={16} height={16} />}
+              label={currentLang === "ar" ? "تحديث" : "Refresh"}
+              variant="outlined"
+              size="small"
+            />
+            <Chip
+              icon={<Icon icon="mdi:plus" width={16} height={16} />}
+              label={currentLang === "ar" ? "إضافة" : "Add"}
+              color="primary"
+              size="small"
+            />
+          </Box>
+        </CardContent>
+      </Card>
+
+      {/* ── RTL/LTR Proof Section — Dialog and TextField ── */}
       <Box
         sx={{
           position: "fixed",

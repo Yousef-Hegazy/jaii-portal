@@ -4,24 +4,27 @@ import type { ReactNode } from "react";
 import { useMemo } from "react";
 import { getCache } from "./rtl-cache";
 import { DirectionProvider, useDirection } from "./direction-context";
+import { createTypographyConfig } from "./typography";
 
 /**
  * Inner providers that depend on direction context.
- * Creates theme with correct direction and uses appropriate Emotion cache.
+ * Creates theme with correct direction, language-aware typography,
+ * and uses appropriate Emotion cache.
  */
 function ThemedProviders({ children }: { children: ReactNode }) {
-  const { direction } = useDirection();
+  const { direction, language } = useDirection();
 
-  // Create theme with dynamic direction
+  // Create theme with dynamic direction and language-aware typography
   const theme = useMemo(
     () =>
       createTheme({
         direction,
+        typography: createTypographyConfig(language),
         palette: {
           mode: "light",
         },
       }),
-    [direction]
+    [direction, language]
   );
 
   // Get the appropriate cache for current direction
