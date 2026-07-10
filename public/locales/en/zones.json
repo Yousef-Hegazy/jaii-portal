@@ -1,0 +1,8 @@
+{
+  "title": "Zones",
+  "description": "Manage service zones",
+  "zoneName": "Zone Name",
+  "polygon": "Boundaries",
+  "active": "Active",
+  "inactive": "Inactive"
+}

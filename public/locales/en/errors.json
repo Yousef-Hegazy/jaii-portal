@@ -1,0 +1,14 @@
+{
+  "notFound": "Page Not Found",
+  "notFoundDescription": "Sorry, the page you are looking for does not exist.",
+  "generalError": "An unexpected error occurred",
+  "generalDescription": "An error occurred while processing your request. Please try again.",
+  "networkError": "Network Error",
+  "networkDescription": "Could not connect to the server. Please check your internet connection.",
+  "unauthorized": "Unauthorized",
+  "unauthorizedDescription": "You do not have permission to access this page.",
+  "forbidden": "Forbidden",
+  "forbiddenDescription": "Access to this resource was denied.",
+  "serverError": "Server Error",
+  "serverDescription": "A server error occurred. Please try again later."
+}

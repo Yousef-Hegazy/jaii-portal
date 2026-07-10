@@ -1,0 +1,19 @@
+{
+  "title": "العملاء",
+  "description": "إدارة بيانات العملاء",
+  "customerId": "رقم العميل",
+  "name": "الاسم",
+  "phone": "رقم الجوال",
+  "email": "البريد الإلكتروني",
+  "address": "العنوان",
+  "totalOrders": "إجمالي الطلبات",
+  "totalSpent": "إجمالي الإنفاق",
+  "lastOrder": "آخر طلب",
+  "loyaltyPoints": "نقاط الولاء",
+  "loyaltyTier": {
+    "bronze": "برونزي",
+    "silver": "فضي",
+    "gold": "ذهبي",
+    "platinum": "بلاتيني"
+  }
+}

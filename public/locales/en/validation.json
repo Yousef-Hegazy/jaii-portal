@@ -1,0 +1,15 @@
+{
+  "required": "This field is required",
+  "email": "Invalid email address",
+  "phone": "Invalid phone number",
+  "minLength": "Must be at least {{min}} characters",
+  "maxLength": "Must not exceed {{max}} characters",
+  "min": "Must be at least {{min}}",
+  "max": "Must not exceed {{max}}",
+  "pattern": "Invalid format",
+  "passwordMatch": "Passwords do not match",
+  "passwordStrength": "Password is too weak",
+  "invalidDate": "Invalid date",
+  "futureDate": "Date must be in the future",
+  "pastDate": "Date must be in the past"
+}

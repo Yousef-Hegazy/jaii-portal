@@ -1,0 +1,39 @@
+{
+  "title": "Appearance",
+  "description": "Customize the dashboard appearance",
+  "language": {
+    "title": "اللغة / Language",
+    "description": "اختر لغة الواجهة"
+  },
+  "mode": {
+    "title": "Theme Mode",
+    "description": "Choose between light, dark, or follow system settings",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "color": {
+    "title": "Primary Color",
+    "description": "Choose the primary color for the interface",
+    "azure": "Azure",
+    "emerald": "Emerald",
+    "violet": "Violet",
+    "coral": "Coral"
+  },
+  "radius": {
+    "title": "Border Radius",
+    "description": "Choose the border radius scale",
+    "compact": "Compact",
+    "balanced": "Balanced",
+    "soft": "Soft",
+    "rounded": "Rounded"
+  },
+  "density": {
+    "title": "Density",
+    "description": "Choose the element density",
+    "compact": "Compact",
+    "comfortable": "Comfortable",
+    "spacious": "Spacious"
+  },
+  "reset": "Reset to defaults"
+}

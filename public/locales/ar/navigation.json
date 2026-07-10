@@ -1,0 +1,24 @@
+{
+  "dashboard": "لوحة التحكم",
+  "orders": "الطلبات",
+  "customers": "العملاء",
+  "analytics": "التحليلات",
+  "partners": "الشركاء",
+  "settings": "الإعدادات",
+  "profile": "الملف الشخصي",
+  "pricing": "التسعير",
+  "zones": "المناطق",
+  "drivers": "السائقون",
+  "appearance": "المظهر",
+  "sidebar": {
+    "collapse": "طي القائمة",
+    "expand": "توسيع القائمة"
+  },
+  "userMenu": {
+    "title": "قائمة المستخدم",
+    "account": "الحساب",
+    "preferences": "التفضيلات",
+    "help": "المساعدة",
+    "signOut": "تسجيل الخروج"
+  }
+}

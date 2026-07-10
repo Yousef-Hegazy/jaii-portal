@@ -1,0 +1,14 @@
+{
+  "notFound": "الصفحة غير موجودة",
+  "notFoundDescription": "عذراً، الصفحة التي تبحث عنها غير موجودة.",
+  "generalError": "حدث خطأ غير متوقع",
+  "generalDescription": "حدث خطأ أثناء معالجة طلبك. يرجى المحاولة مرة أخرى.",
+  "networkError": "خطأ في الشبكة",
+  "networkDescription": "تعذر الاتصال بالخادم. يرجى التحقق من اتصالك بالإنترنت.",
+  "unauthorized": "غير مصرح",
+  "unauthorizedDescription": "ليس لديك صلاحية للوصول إلى هذه الصفحة.",
+  "forbidden": "محظور",
+  "forbiddenDescription": "تم رفض الوصول إلى هذا المورد.",
+  "serverError": "خطأ في الخادم",
+  "serverDescription": "حدث خطأ في الخادم. يرجى المحاولة لاحقاً."
+}

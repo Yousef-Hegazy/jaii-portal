@@ -1,0 +1,11 @@
+{
+  "title": "السائقون",
+  "description": "إدارة السائقين",
+  "driverName": "اسم السائق",
+  "phone": "رقم الجوال",
+  "vehicleType": "نوع المركبة",
+  "status": "الحالة",
+  "available": "متاح",
+  "busy": "مشغول",
+  "offline": "غير متصل"
+}

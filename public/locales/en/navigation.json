@@ -1,0 +1,24 @@
+{
+  "dashboard": "Dashboard",
+  "orders": "Orders",
+  "customers": "Customers",
+  "analytics": "Analytics",
+  "partners": "Partners",
+  "settings": "Settings",
+  "profile": "Profile",
+  "pricing": "Pricing",
+  "zones": "Zones",
+  "drivers": "Drivers",
+  "appearance": "Appearance",
+  "sidebar": {
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar"
+  },
+  "userMenu": {
+    "title": "User menu",
+    "account": "Account",
+    "preferences": "Preferences",
+    "help": "Help",
+    "signOut": "Sign out"
+  }
+}

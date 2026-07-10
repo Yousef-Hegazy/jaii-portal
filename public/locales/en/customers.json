@@ -1,0 +1,19 @@
+{
+  "title": "Customers",
+  "description": "Manage customer data",
+  "customerId": "Customer ID",
+  "name": "Name",
+  "phone": "Phone",
+  "email": "Email",
+  "address": "Address",
+  "totalOrders": "Total Orders",
+  "totalSpent": "Total Spent",
+  "lastOrder": "Last Order",
+  "loyaltyPoints": "Loyalty Points",
+  "loyaltyTier": {
+    "bronze": "Bronze",
+    "silver": "Silver",
+    "gold": "Gold",
+    "platinum": "Platinum"
+  }
+}

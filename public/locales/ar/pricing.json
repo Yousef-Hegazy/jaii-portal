@@ -1,0 +1,11 @@
+{
+  "title": "التسعير",
+  "description": "إدارة أسعار الخدمات",
+  "basePrice": "السعر الأساسي",
+  "perKg": "لكل كيلو",
+  "perItem": "لكل قطعة",
+  "expressFee": "رسوم السريع",
+  "pickupFee": "رسوم الاستلام",
+  "deliveryFee": "رسوم التوصيل",
+  "weekendFee": "رسوم نهاية الأسبوع"
+}

@@ -1,0 +1,24 @@
+{
+  "title": "Orders",
+  "description": "Manage and track all orders",
+  "newOrder": "New Order",
+  "orderId": "Order ID",
+  "customer": "Customer",
+  "status": "Status",
+  "total": "Total",
+  "items": "Items",
+  "pickup": "Pickup",
+  "delivery": "Delivery",
+  "address": "Address",
+  "notes": "Notes",
+  "assignDriver": "Assign Driver",
+  "statusBadge": {
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "pickedUp": "Picked Up",
+    "processing": "Processing",
+    "ready": "Ready",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled"
+  }
+}

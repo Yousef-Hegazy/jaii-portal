@@ -1,0 +1,27 @@
+{
+  "heroTitle": "Laundry Management Platform",
+  "heroSubtitle": "A complete solution for managing laundry operations",
+  "heroDescription": "Comprehensive system for managing orders, customers, and partners with advanced analytics",
+  "ctaTitle": "Get Started",
+  "ctaDescription": "Join the platform and enjoy a seamless management experience",
+  "loginButton": "Login",
+  "featuresTitle": "Features",
+  "features": {
+    "orders": {
+      "title": "Order Management",
+      "description": "Track and manage all orders easily"
+    },
+    "customers": {
+      "title": "Customer Management",
+      "description": "Comprehensive customer database with full history"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "description": "Advanced reports and statistics for better decisions"
+    },
+    "partners": {
+      "title": "Partners",
+      "description": "Efficiently manage laundries and drivers"
+    }
+  }
+}

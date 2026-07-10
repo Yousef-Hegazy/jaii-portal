@@ -1,0 +1,20 @@
+{
+  "title": "لوحة التحكم",
+  "description": "نظرة عامة على أداء المنصة",
+  "welcome": "مرحباً بك",
+  "overview": "نظرة عامة",
+  "kpi": {
+    "totalOrders": "إجمالي الطلبات",
+    "totalRevenue": "إجمالي الإيرادات",
+    "activeCustomers": "العملاء النشطون",
+    "activeDrivers": "السائقون النشطون",
+    "pendingOrders": "الطلبات المعلقة",
+    "completedOrders": "الطلبات المكتملة",
+    "avgDeliveryTime": "متوسط وقت التوصيل",
+    "customerSatisfaction": "رضا العملاء"
+  },
+  "recentOrders": "الطلبات الأخيرة",
+  "topCustomers": "أفضل العملاء",
+  "revenueChart": "رسم الإيرادات",
+  "ordersChart": "رسم الطلبات"
+}

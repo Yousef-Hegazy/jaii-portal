@@ -1,0 +1,16 @@
+{
+  "title": "Settings",
+  "description": "Manage system settings",
+  "profile": {
+    "title": "Profile",
+    "description": "Manage your personal information",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "avatar": "Avatar",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password"
+  }
+}

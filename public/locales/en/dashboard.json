@@ -1,0 +1,20 @@
+{
+  "title": "Dashboard",
+  "description": "Overview of platform performance",
+  "welcome": "Welcome",
+  "overview": "Overview",
+  "kpi": {
+    "totalOrders": "Total Orders",
+    "totalRevenue": "Total Revenue",
+    "activeCustomers": "Active Customers",
+    "activeDrivers": "Active Drivers",
+    "pendingOrders": "Pending Orders",
+    "completedOrders": "Completed Orders",
+    "avgDeliveryTime": "Avg. Delivery Time",
+    "customerSatisfaction": "Customer Satisfaction"
+  },
+  "recentOrders": "Recent Orders",
+  "topCustomers": "Top Customers",
+  "revenueChart": "Revenue Chart",
+  "ordersChart": "Orders Chart"
+}

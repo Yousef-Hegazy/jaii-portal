@@ -1,0 +1,11 @@
+{
+  "title": "Drivers",
+  "description": "Manage drivers",
+  "driverName": "Driver Name",
+  "phone": "Phone",
+  "vehicleType": "Vehicle Type",
+  "status": "Status",
+  "available": "Available",
+  "busy": "Busy",
+  "offline": "Offline"
+}

@@ -1,0 +1,11 @@
+{
+  "title": "Pricing",
+  "description": "Manage service prices",
+  "basePrice": "Base Price",
+  "perKg": "Per Kg",
+  "perItem": "Per Item",
+  "expressFee": "Express Fee",
+  "pickupFee": "Pickup Fee",
+  "deliveryFee": "Delivery Fee",
+  "weekendFee": "Weekend Fee"
+}

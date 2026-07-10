@@ -1,0 +1,24 @@
+{
+  "title": "الطلبات",
+  "description": "إدارة وتتبع جميع الطلبات",
+  "newOrder": "طلب جديد",
+  "orderId": "رقم الطلب",
+  "customer": "العميل",
+  "status": "الحالة",
+  "total": "المجموع",
+  "items": "العناصر",
+  "pickup": "الاستلام",
+  "delivery": "التوصيل",
+  "address": "العنوان",
+  "notes": "ملاحظات",
+  "assignDriver": "تعيين سائق",
+  "statusBadge": {
+    "pending": "قيد الانتظار",
+    "confirmed": "مؤكد",
+    "pickedUp": "تم الاستلام",
+    "processing": "قيد المعالجة",
+    "ready": "جاهز",
+    "delivered": "تم التوصيل",
+    "cancelled": "ملغي"
+  }
+}
