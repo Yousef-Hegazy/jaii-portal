@@ -8,7 +8,11 @@ import {
 } from "react-router";
 
 import type { Route } from "./+types/root";
+import AppProviders from "./lib/providers";
 import "./app.css";
+
+// Initialize i18n (side-effect import ensures HttpBackend + react-i18next init)
+import "./lib/i18n";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -23,9 +27,15 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+/**
+ * Layout component - uses default Arabic RTL for SSR/client hydration consistency.
+ * Direction changes are handled by DirectionProvider after mount.
+ */
 export function Layout({ children }: { children: React.ReactNode }) {
+  // Always render with Arabic RTL for SSR/client hydration consistency
+  // Direction changes happen client-side via DirectionProvider
   return (
-    <html lang="en">
+    <html lang="ar-SA" dir="rtl">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -33,7 +43,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        <AppProviders>{children}</AppProviders>
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -62,11 +72,11 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
+    <main style={{ padding: "2rem" }}>
       <h1>{message}</h1>
       <p>{details}</p>
       {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
+        <pre style={{ width: "100%", overflowX: "auto" }}>
           <code>{stack}</code>
         </pre>
       )}
