@@ -15,9 +15,14 @@ import DialogActions from "@mui/material/DialogActions";
 import Grid from "@mui/material/Grid";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
+import Paper from "@mui/material/Paper";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import Divider from "@mui/material/Divider";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { TYPOGRAPHY_SCALE, getFontFamily } from "../lib/typography";
+import { useTheme } from "@mui/material/styles";
 
 import type { Route } from "./+types/home";
 
@@ -30,6 +35,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   const { t } = useTranslation("landing");
+  const theme = useTheme();
   const currentLang = i18n.language;
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -108,6 +114,240 @@ export default function Home() {
               English
             </Button>
           </Box>
+        </CardContent>
+      </Card>
+
+      {/* ── Theme Proof Section ── */}
+      <Card sx={{ maxWidth: 800, width: "100%" }}>
+        <CardContent sx={{ py: 4, px: 4 }}>
+          <Typography variant="overline" color="text.secondary" sx={{ mb: 2, display: "block" }}>
+            {currentLang === "ar" ? "مكونات السمة" : "Theme Components"} — Cyan Primary
+          </Typography>
+
+          <Stack spacing={4}>
+            {/* Buttons */}
+            <Box>
+              <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
+                {currentLang === "ar" ? "الأزرار" : "Buttons"}
+              </Typography>
+              <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
+                <Button variant="contained">{currentLang === "ar" ? "أساسي" : "Contained"}</Button>
+                <Button variant="outlined">{currentLang === "ar" ? "محدد" : "Outlined"}</Button>
+                <Button variant="text">{currentLang === "ar" ? "نص" : "Text"}</Button>
+                <Button variant="contained" size="small">{currentLang === "ar" ? "صغير" : "Small"}</Button>
+                <Button variant="contained" size="large">{currentLang === "ar" ? "كبير" : "Large"}</Button>
+                <Button variant="contained" disabled>{currentLang === "ar" ? "معطل" : "Disabled"}</Button>
+              </Box>
+            </Box>
+
+            {/* Icon Buttons */}
+            <Box>
+              <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
+                {currentLang === "ar" ? "أزرار الأيقونات" : "Icon Buttons"}
+              </Typography>
+              <Box sx={{ display: "flex", gap: 1 }}>
+                <Tooltip title={currentLang === "ar" ? "الرئيسية" : "Home"}>
+                  <IconButton>
+                    <Icon icon="mdi:home" width={20} height={20} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={currentLang === "ar" ? "الإعدادات" : "Settings"}>
+                  <IconButton color="primary">
+                    <Icon icon="mdi:cog" width={20} height={20} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={currentLang === "ar" ? "الحذف" : "Delete"}>
+                  <IconButton color="error">
+                    <Icon icon="mdi:delete" width={20} height={20} />
+                  </IconButton>
+                </Tooltip>
+                <IconButton disabled>
+                  <Icon icon="mdi:close" width={20} height={20} />
+                </IconButton>
+              </Box>
+            </Box>
+
+            {/* Chips */}
+            <Box>
+              <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
+                {currentLang === "ar" ? "العلامات" : "Chips"}
+              </Typography>
+              <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                <Chip label={currentLang === "ar" ? "افتراضي" : "Default"} />
+                <Chip label={currentLang === "ar" ? "أساسي" : "Primary"} color="primary" />
+                <Chip label={currentLang === "ar" ? "نجاح" : "Success"} color="success" />
+                <Chip label={currentLang === "ar" ? "تحذير" : "Warning"} color="warning" />
+                <Chip label={currentLang === "ar" ? "خطأ" : "Error"} color="error" />
+                <Chip label={currentLang === "ar" ? "محدد" : "Outlined"} variant="outlined" />
+                <Chip
+                  icon={<Icon icon="mdi:check" width={16} height={16} />}
+                  label={currentLang === "ar" ? "مع أيقونة" : "With Icon"}
+                  color="primary"
+                  variant="outlined"
+                />
+                <Chip
+                  label={currentLang === "ar" ? "قابل للحذف" : "Deletable"}
+                  onDelete={() => {}}
+                  color="primary"
+                />
+              </Box>
+            </Box>
+
+            {/* Papers */}
+            <Box>
+              <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
+                {currentLang === "ar" ? "الأوراق" : "Papers"}
+              </Typography>
+              <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+                <Paper elevation={0} sx={{ p: 2, minWidth: 100, textAlign: "center" }}>
+                  <Typography variant="body2">elevation 0</Typography>
+                </Paper>
+                <Paper elevation={1} sx={{ p: 2, minWidth: 100, textAlign: "center" }}>
+                  <Typography variant="body2">elevation 1</Typography>
+                </Paper>
+                <Paper elevation={2} sx={{ p: 2, minWidth: 100, textAlign: "center" }}>
+                  <Typography variant="body2">elevation 2</Typography>
+                </Paper>
+                <Paper elevation={3} sx={{ p: 2, minWidth: 100, textAlign: "center" }}>
+                  <Typography variant="body2">elevation 3</Typography>
+                </Paper>
+                <Paper variant="outlined" sx={{ p: 2, minWidth: 100, textAlign: "center" }}>
+                  <Typography variant="body2">outlined</Typography>
+                </Paper>
+              </Box>
+            </Box>
+
+            {/* Text Fields */}
+            <Box>
+              <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
+                {currentLang === "ar" ? "حقول النص" : "Text Fields"}
+              </Typography>
+              <Stack spacing={2}>
+                <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+                  <TextField
+                    label={currentLang === "ar" ? "محدد" : "Outlined"}
+                    variant="outlined"
+                    size="small"
+                    sx={{ minWidth: 160 }}
+                  />
+                  <TextField
+                    label={currentLang === "ar" ? "مملوء" : "Filled"}
+                    variant="filled"
+                    size="small"
+                    sx={{ minWidth: 160 }}
+                  />
+                  <TextField
+                    label={currentLang === "ar" ? "قياسي" : "Standard"}
+                    variant="standard"
+                    size="small"
+                    sx={{ minWidth: 160 }}
+                  />
+                </Box>
+                <TextField
+                  label={currentLang === "ar" ? "مع أيقونة" : "With Icon"}
+                  variant="outlined"
+                  size="small"
+                  sx={{ maxWidth: 300 }}
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <Icon icon="mdi:magnify" width={18} height={18} style={{ opacity: 0.6 }} />
+                      ),
+                    },
+                  }}
+                />
+              </Stack>
+            </Box>
+
+            {/* Cards */}
+            <Box>
+              <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5 }}>
+                {currentLang === "ar" ? "البطاقات" : "Cards"}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                  <Card>
+                    <CardContent>
+                      <Typography variant="h6" gutterBottom>
+                        {currentLang === "ar" ? "بطاقة بسيطة" : "Simple Card"}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {currentLang === "ar"
+                          ? "هذه بطاقة بسيطة مع محتوى نصي."
+                          : "This is a simple card with text content."}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                  <Card variant="outlined">
+                    <CardContent>
+                      <Typography variant="h6" gutterBottom>
+                        {currentLang === "ar" ? "بطاقة محددة" : "Outlined Card"}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {currentLang === "ar"
+                          ? "هذه بطاقة مع حدود فقط."
+                          : "This is a card with only borders."}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                  <Card sx={{ background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)` }}>
+                    <CardContent>
+                      <Typography variant="h6" gutterBottom sx={{ color: "white" }}>
+                        {currentLang === "ar" ? "بطاقة ملونة" : "Gradient Card"}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.8)" }}>
+                        {currentLang === "ar"
+                          ? "بطاقة بخلفية متدرجة."
+                          : "Card with gradient background."}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>
+            </Box>
+
+            {/* Divider */}
+            <Divider>
+              <Chip
+                label={currentLang === "ar" ? "معلومات السمة" : "Theme Info"}
+                size="small"
+                variant="outlined"
+              />
+            </Divider>
+
+            {/* Theme Info */}
+            <Paper variant="outlined" sx={{ p: 2 }}>
+              <Typography variant="body2" color="text.secondary">
+                {currentLang === "ar" ? "السمة الحالية" : "Current Theme"}:
+              </Typography>
+              <Box sx={{ display: "flex", gap: 1, mt: 1, flexWrap: "wrap" }}>
+                <Chip
+                  size="small"
+                  label={`mode: ${theme.palette.mode}`}
+                  variant="outlined"
+                />
+                <Chip
+                  size="small"
+                  label={`primary: ${theme.palette.primary.main}`}
+                  variant="outlined"
+                />
+                <Chip
+                  size="small"
+                  label={`radius: ${theme.shape.borderRadius}px`}
+                  variant="outlined"
+                />
+                <Chip
+                  size="small"
+                  label={`direction: ${theme.direction}`}
+                  variant="outlined"
+                />
+              </Box>
+            </Paper>
+          </Stack>
         </CardContent>
       </Card>
 

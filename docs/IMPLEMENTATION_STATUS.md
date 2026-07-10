@@ -6,6 +6,7 @@
 **Phase 2 — Translation Source of Truth** ✅ Complete
 **Phase 3 — Correct MUI RTL/LTR Engine** ✅ Complete
 **Phase 4 — Font and Icon Foundation** ✅ Complete
+**Phase 5 — Base MUI Theme Anatomy** ✅ Complete
 
 ---
 
@@ -18,7 +19,7 @@
 | 2 | Translation source of truth | ✅ **Done** | DeepSeek v4 Flash | i18next config-only, 7 initial namespaces, language switch proof | Language switch changes visible text; correct namespace files requested; no duplicate catalog |
 | 3 | Correct MUI RTL/LTR engine | ✅ **Done** | GLM-5 | Document lang/dir, theme direction, Emotion RTL caches, stylis prefixer + MUI RTL plugin, portal components | TextField, Dialog, spacing, document direction mirror correctly without reload |
 | 4 | Font and icon foundation | ✅ **Done** | DeepSeek v4 Flash | Public Sans (EN), Tajawal (AR), @iconify/react, typography tokens, language-switched fonts | Arabic uses Tajawal, English uses Public Sans, icons render without extra library |
-| 5 | Base MUI theme anatomy | ⬜ Pending | GLM-5 | Semantic palette, neutral scale, typography, spacing, shape, shadows, transitions, z-index, TS augmentation, component overrides structure | Proof components look coherent/premium in default light theme (Cyan primary) |
+| 5 | Base MUI theme anatomy | ✅ **Done** | GLM-5 | Semantic palette, neutral scale, typography, spacing, shape, shadows, transitions, z-index, TS augmentation, component overrides structure | Proof components look coherent/premium in default light theme (Cyan primary) |
 | 6 | Light/dark/theme generation | ⬜ Pending | DeepSeek v4 Flash | Complete light/dark/system modes, OS preference following, no reload, temp mode selector | All proof components affected in light/dark/system including open Dialog/menu |
 | 7 | Six primary-color presets | ⬜ Pending | DeepSeek v4 Flash | Emerald, Cyan, Purple, Blue, Orange, Red with full tonal palettes, temp preset selector | Every preset attractive/readable in light+dark; Cyan default; no hardcoded primary |
 | 8 | Shape, density, contrast, typography preferences | ⬜ Pending | DeepSeek v4 Flash | Radius (4), compact (on/off), contrast (2), font family (4 + Arabic), font size (14-18), temp controls | Each setting causes obvious global change on real MUI components |
@@ -455,5 +456,111 @@ pnpm run build
 
 ### Next Phase
 **Phase 5 — Base MUI Theme Anatomy** (Model: GLM-5)
+
+**No existing dependencies downgraded.** ✅
+
+---
+
+## Phase 5 — Base MUI Theme Anatomy Results
+
+### Changed Files
+
+| File | Change |
+|------|--------|
+| `app/lib/theme/palette.ts` | **Created** — Semantic palette with 6 primary presets (Cyan default), neutral grey scale, semantic status colors, chart colors |
+| `app/lib/theme/shadows.ts` | **Created** — Premium shadow system with light/dark variants, component-specific shadows |
+| `app/lib/theme/shape.ts` | **Created** — Border radius system with 4 presets (compact/balanced/soft/rounded) |
+| `app/lib/theme/transitions.ts` | **Created** — Easing curves and duration values for smooth animations |
+| `app/lib/theme/z-index.ts` | **Created** — Organized z-index scale for consistent layering |
+| `app/lib/theme/spacing.ts` | **Created** — Consistent spacing scale based on 4px grid |
+| `app/lib/theme/theme-augmentation.ts` | **Created** — TypeScript augmentation for custom theme properties |
+| `app/lib/theme/index.ts` | **Created** — Main theme factory composing all pieces |
+| `app/lib/theme/overrides/button.ts` | **Created** — Button component overrides |
+| `app/lib/theme/overrides/card.ts` | **Created** — Card component overrides |
+| `app/lib/theme/overrides/paper.ts` | **Created** — Paper component overrides |
+| `app/lib/theme/overrides/textField.ts` | **Created** — TextField component overrides |
+| `app/lib/theme/overrides/tooltip.ts` | **Created** — Tooltip component overrides |
+| `app/lib/theme/overrides/dialog.ts` | **Created** — Dialog component overrides |
+| `app/lib/theme/overrides/drawer.ts` | **Created** — Drawer component overrides |
+| `app/lib/theme/overrides/chip.ts` | **Created** — Chip component overrides |
+| `app/lib/theme/overrides/iconButton.ts` | **Created** — IconButton component overrides |
+| `app/lib/theme/overrides/index.ts` | **Created** — Component overrides index |
+| `app/lib/providers.tsx` | **Modified** — Updated to use `createJaiiTheme()` |
+| `app/routes/home.tsx` | **Modified** — Added comprehensive theme proof section with all components |
+
+### Architecture
+
+1. **Palette System** (`app/lib/theme/palette.ts`):
+   - 6 primary color presets: Emerald, Cyan (default), Purple, Blue, Orange, Red
+   - Each preset includes: main, light, lighter, dark, darker, contrastText
+   - Neutral grey scale: 0-900 with semantic naming
+   - Semantic status colors: success, warning, error, info
+   - Chart color configuration for data visualization
+
+2. **Shadow System** (`app/lib/theme/shadows.ts`):
+   - Light and dark shadow variants
+   - Component-specific shadows: card, dropdown, modal, drawer, button
+   - Premium layered shadows for depth
+
+3. **Shape System** (`app/lib/theme/shape.ts`):
+   - 4 radius presets: compact (4px), balanced (8px), soft (12px), rounded (16px)
+   - Component-specific radii for fine control
+
+4. **Component Overrides** (`app/lib/theme/overrides/`):
+   - Button: No text transform, premium shadows, consistent sizing
+   - Card: Subtle borders, soft shadows, hover elevation
+   - Paper: Premium elevation variants
+   - TextField: Consistent border radius, subtle focus states
+   - Tooltip: Rounded, smooth transitions
+   - Dialog: Rounded corners, premium shadows
+   - Drawer: RTL-aware edges, subtle shadows
+   - Chip: Consistent sizing, subtle filled variants
+   - IconButton: Subtle hover backgrounds
+
+5. **Theme Factory** (`app/lib/theme/index.ts`):
+   - `createJaiiTheme()` function accepts options for mode, primary preset, radius, language, direction
+   - Composes all theme pieces into a complete MUI theme
+   - Includes custom `jaii` namespace for extended theme properties
+
+### Commands Run and Results
+
+```bash
+# Type generation + typecheck
+pnpm run typecheck
+# → Pre-existing @tanstack/react-query error only (Phase 29)
+
+# Production build
+pnpm run build
+# → Success: client + SSR environments built
+```
+
+### Typecheck Status
+- `pnpm run typecheck` — **Only pre-existing failure (not caused by Phase 5):**
+  - `app/lib/queryClient.ts` — Cannot find module `@tanstack/react-query` (package not in `package.json`, Phase 29)
+- No new typecheck errors introduced by Phase 5.
+
+### Build Status
+- `pnpm run build` — **Passes** (client + SSR environments)
+
+### Verified Behavior
+- `/` route renders with comprehensive theme proof section
+- All 6 primary presets available (Cyan is default)
+- Buttons: contained, outlined, text variants with premium shadows
+- IconButtons: with tooltips, color variants, proper sizing
+- Chips: filled and outlined variants, with icons, deletable
+- Papers: multiple elevation levels, outlined variant
+- TextFields: outlined, filled, standard variants with icons
+- Cards: simple, outlined, gradient variants
+- Theme info panel shows current theme configuration
+- All components render coherently with Cyan primary color
+- RTL/LTR behavior preserved from Phase 3
+
+### Limitations / Known Issues
+- Theme switching controls not yet implemented (Phase 6+)
+- Only light mode currently (Phase 6 adds dark mode)
+- `@tanstack/react-query` module-not-found in `queryClient.ts` remains as a pre-existing issue (Phase 29)
+
+### Next Phase
+**Phase 6 — Light/Dark/Theme Generation** (Model: DeepSeek v4 Flash)
 
 **No existing dependencies downgraded.** ✅

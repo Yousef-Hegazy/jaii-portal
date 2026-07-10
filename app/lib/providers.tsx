@@ -1,10 +1,10 @@
 import { CacheProvider } from "@emotion/react";
-import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
+import { ThemeProvider, CssBaseline } from "@mui/material";
 import type { ReactNode } from "react";
 import { useMemo } from "react";
 import { getCache } from "./rtl-cache";
 import { DirectionProvider, useDirection } from "./direction-context";
-import { createTypographyConfig } from "./typography";
+import { createJaiiTheme } from "./theme";
 
 /**
  * Inner providers that depend on direction context.
@@ -16,14 +16,13 @@ function ThemedProviders({ children }: { children: ReactNode }) {
 
   // Create theme with dynamic direction and language-aware typography
   const theme = useMemo(
-    () =>
-      createTheme({
-        direction,
-        typography: createTypographyConfig(language),
-        palette: {
-          mode: "light",
-        },
-      }),
+    () => createJaiiTheme({
+      mode: "light",
+      primaryPreset: "cyan",
+      radius: "balanced",
+      language,
+      direction,
+    }),
     [direction, language]
   );
 
