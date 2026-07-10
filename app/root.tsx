@@ -23,11 +23,11 @@ import "@fontsource/tajawal";
 
 /**
  * Layout component - uses default Arabic RTL for SSR/client hydration consistency.
- * Direction changes are handled by DirectionProvider after mount.
+ * Direction changes happen client-side via Zustand DirectionSync.
  */
 export function Layout({ children }: { children: React.ReactNode }) {
   // Always render with Arabic RTL for SSR/client hydration consistency
-  // Direction changes happen client-side via DirectionProvider
+  // Direction changes happen client-side via Zustand DirectionSync
   return (
     <html lang="ar-SA" dir="rtl" data-mode="light" suppressHydrationWarning>
       <head>

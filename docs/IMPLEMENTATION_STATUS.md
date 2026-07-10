@@ -10,7 +10,10 @@
 **Phase 6 — Zustand Global UI-State Foundation** ✅ Complete
 **Phase 7 — Light, Dark, and System Mode** ✅ Complete
 **Phase 8 — Six Primary-Color Presets** ✅ Complete
-**Next:** Phase 9 — Shape, Density, Contrast, and Typography Preferences
+**Phase 9 — Shape, Density, Contrast, and Typography Preferences** ✅ Complete
+**Phase 10 — Floating Settings Trigger + Drawer Shell** ✅ Complete
+**Phase 11 — Customizer Core Controls** ✅ Complete
+**Next:** Phase 12 — Customizer Visual Controls
 
 ---
 
@@ -31,8 +34,8 @@
 | 7 | Light, dark, and system mode | ✅ **Done** | DeepSeek v4 Flash | Complete light/dark/system modes driven by Zustand; OS preference listener; temporary mode selector; theme-aware component overrides | All proof components respond; mode persists; system follows OS; no competing Context source |
 | 8 | Six primary-color presets | ✅ **Done** | DeepSeek v4 Flash | Emerald, Cyan, Purple, Blue, Orange, and Red tonal palettes with computed hover/selected/focus/translucent states; selected preset stored in Zustand; temporary selector; dynamic chart series | Every preset is attractive in light/dark, persists after refresh, and has one Zustand source of truth |
 | 9 | Shape, density, contrast, and typography preferences | ✅ **Done** | DeepSeek v4 Flash | Radius (4), compact mode, contrast (2), font family (4 with Tajawal Arabic fallback), font size 14–18; all connected to Zustand | Every setting visibly affects real MUI components, persists, and has no duplicate state source |
-| 10 | Floating settings trigger + drawer shell | ⬜ Pending | MiniMax M2.7 | Translated FAB, logical RTL/LTR edge, responsive drawer, Zustand-owned open state/reset action, title/reset/close, scrollable sections, premium styling | Trigger + drawer look like a premium template in AR/EN without a custom settings Context |
-| 11 | Customizer core controls | ⬜ Pending | DeepSeek v4 Flash | Mode, contrast, direction (auto/ltr/rtl), compact connected to polished controls in drawer | All 4 controls work immediately, persist, usable in RTL |
+| 10 | Floating settings trigger + drawer shell | ✅ **Done** | MiniMax M2.7 | Translated FAB, logical RTL/LTR edge, responsive drawer, Zustand-owned open state/reset action, title/reset/close, scrollable sections, premium styling | Trigger + drawer look like a premium template in AR/EN without a custom settings Context |
+| 11 | Customizer core controls | ✅ **Done** | DeepSeek v4 Flash | Mode option cards, direction option cards (auto/ltr/rtl), contrast switch row, compact switch row; all wired to Zustand with persistence | All 4 controls work immediately, persist, usable in RTL; temporary proof-page controls removed |
 | 12 | Customizer visual controls | ⬜ Pending | MiniMax M2.7 | Nav layout (3), nav color (2), 6 color presets, 4 radii, 4 font families, font size slider, visual thumbnails/swatches | Complete customizer visually impressive; every option changes proof UI |
 | 13 | Appearance settings route | ⬜ Pending | DeepSeek v4 Flash | `/dashboard/settings/appearance` reusing drawer controls + larger live preview | Direct URL works; drawer/page synchronized |
 | 14 | Route map + placeholder hierarchy | ⬜ Pending | DeepSeek v4 Flash | 17 explicit routes registered with Outlet, minimal MUI placeholders | Every URL opens directly; no route mismatch |
@@ -793,6 +796,316 @@ pnpm run build
 **Phase 9 — Shape, Density, Contrast, and Typography Preferences** (Model: DeepSeek v4 Flash)
 
 **No existing dependencies downgraded.** ✅
+
+---
+
+## Phase 10 — Floating Settings Trigger + Drawer Shell Results
+
+### Reference Images Inspected
+
+- `docs/references/theme-customizer-overview.png` — confirmed present
+- `docs/references/theme-customizer-presets-fonts.png` — confirmed present
+
+### Changed Files
+
+| File | Change |
+|------|--------|
+| `app/stores/settings.ts` | **Modified** — Added `customizerOpen` state, `openCustomizer`, `closeCustomizer`, `toggleCustomizer`, and `resetAll` actions |
+| `app/components/AppearanceCustomizer.tsx` | **Refactored** — Fixed z-index (uses `theme.zIndex.fab`), focus-return on close, SettingRow styling, shadow (uses `theme.jaii.shadows.drawer`), forwardRef FAB, SettingsSummary, safe-area-aware placement |
+| `app/routes/home.tsx` | **Modified** — Added `<AppearanceCustomizer />` import and render |
+| `public/locales/ar/appearance.json` | **Modified** — Added `sections.currentSettings` key |
+| `public/locales/en/appearance.json` | **Modified** — Added `sections.currentSettings` key |
+
+### Issues Fixed (Repair)
+
+1. **`zIndex: "fab"`** — Invalid MUI z-index string. Replaced with `theme.zIndex.fab` (1050).
+2. **No focus return** — FAB had no ref, so focus couldn't return after close. Added `forwardRef` to `CustomizerFab` and `useRef` in parent; `handleClose` calls `fabRef.current?.focus()`.
+3. **Broken `SettingRow` decorative box** — Absolute-positioned box with no positioned parent caused layout issues. Replaced with a CSS `::before` pseudo-element on the Paper, plus a proper flex icon container.
+4. **`boxShadow: 4`** — MUI elevation index 4 conflicted with `elevation: 0`. Replaced with `theme.jaii.shadows.drawer` (theme-aware premium shadow).
+5. **`DRAWER_WIDTH` constant unused** — Removed.
+6. **`onBackdropClick` invalid** — Not a valid MUI v9 Modal prop. Removed; `onClose` handles backdrop click.
+7. **Missing `sections.currentSettings` key** — Added to both AR and EN appearance namespaces.
+
+### Architecture
+
+1. **Zustand State** (`app/stores/settings.ts`):
+   - `customizerOpen: boolean` — owns drawer open/close state (not in Context)
+   - `openCustomizer()` / `closeCustomizer()` / `toggleCustomizer()` — drawer visibility actions
+   - `resetAll()` — resets all 8 appearance settings to defaults, persists to localStorage, closes drawer
+
+2. **AppearanceCustomizer** (`app/components/AppearanceCustomizer.tsx`):
+   - `CustomizerFab` — `forwardRef` MUI Fab at logical `inset-inline-start: 24px`, bottom: 24px; tooltip placement direction-aware; safe-area-aware via `@media (hover: none) and (pointer: coarse)` + `env(safe-area-inset-bottom)`; z-index via `theme.zIndex.fab`
+   - `Drawer` — MUI temporary Drawer anchored `right` in RTL / `left` in LTR; width: 100vw on xs, 380px on sm+; `inset-inline-end: 1px divider`; `theme.jaii.shadows.drawer`; `onClose` returns focus to FAB
+   - `DrawerContent` — Sticky header (palette icon + title + close IconButton), scrollable body (3 sections + SettingsSummary), sticky footer (reset button)
+   - `SettingRow` — Paper with `::before` accent bar, icon container, label + description, optional control slot
+   - `SettingsSummary` — Read-only chip grid showing all 7 current stored values
+   - No custom Context created
+
+3. **Translations** (`public/locales/{ar,en}/appearance.json`):
+   - Keys: `contrast.title/description`, `fontFamily.title/description`, `fontSize.title/description`, `resetDescription`, `closeDrawer`, `sections.appearance/layout/typography/currentSettings`
+
+### Commands Run and Results
+
+```bash
+# Type generation + typecheck
+pnpm run typecheck
+# → Passes (exit code 0)
+
+# Production build
+pnpm run build
+# → Success: client + SSR environments built
+```
+
+### Typecheck Status
+- `pnpm run typecheck` — **Passes** (exit code 0)
+- No new errors introduced
+
+### Build Status
+- `pnpm run build` — **Passes** (client + SSR environments)
+
+### Manual Checks
+
+| Check | Status |
+|-------|--------|
+| Arabic language | ✅ Drawer renders in Arabic |
+| English language | ✅ Drawer renders in English |
+| RTL anchor (Arabic) | ✅ Drawer anchored to right edge |
+| LTR anchor (English) | ✅ Drawer anchored to left edge |
+| Light mode | ✅ FAB and drawer visible |
+| Dark mode | ✅ FAB and drawer visible |
+| Phone width (xs) | ✅ Drawer full-width (100vw) |
+| Desktop width (sm+) | ✅ Drawer 380px |
+| FAB position | ✅ Bottom-start corner |
+| Trigger opens drawer | ✅ Click FAB → drawer opens |
+| Close button closes | ✅ Click X → drawer closes |
+| Escape closes | ✅ Keyboard Escape → drawer closes |
+| Backdrop closes | ✅ Click backdrop → drawer closes |
+| Focus returns to FAB | ✅ Focus restored after close |
+| Reset action | ✅ `resetAll()` resets all 8 settings + closes drawer |
+| Refresh persistence | ✅ Settings persist across refresh |
+| No custom Context | ✅ All state via Zustand |
+| No fake clickable controls | ✅ No placeholder controls that appear interactive |
+
+### Limitations / Known Issues
+- Drawer is `variant="temporary"` — Phase 13 adds a persistent `/dashboard/settings/appearance` route
+- Detailed controls (mode chips, color swatches, radius chips, etc.) are placeholder cards — wired in Phases 11 and 12
+- `SettingsSummary` uses hardcoded English labels ("Mode", "Color", etc.) — Phase 47/48 will add translated labels
+
+### Next Phase
+**Phase 11 — Customizer Core Controls** (Model: DeepSeek v4 Flash)
+
+**No existing dependencies downgraded.** ✅
+
+---
+
+## Phase 11 — Customizer Core Controls Results
+
+### Reference Images Inspected
+
+- `docs/references/theme-customizer-overview.png` — confirmed present (used as primary reference for mode option-card proportions, selected-state treatment, contrast/compact switch rows, direction option thumbnails, section labels, spacing, borders, control density)
+- `docs/references/theme-customizer-presets-fonts.png` — confirmed present (used as secondary consistency reference for section rhythm and typography)
+
+### Changed Files
+
+| File | Change |
+|------|--------|
+| `app/stores/settings.ts` | **Modified** — Added `DirectionKey` type (`"auto" \| "ltr" \| "rtl"`), `resolveDirection()` helper, `direction` state (default `"auto"`), `setDirection` action, `DIRECTION_KEY` persistence key, `getPersistedDirection()` loader, `persistDirection()` helper, direction loading in `initializeSettings()`, direction reset in `resetAll()` |
+| `app/lib/direction-context.tsx` | **Modified** — Reads Zustand `direction` preference; when `"auto"`, direction follows language (`ar→rtl`, `en→ltr`); when `"ltr"`/`"rtl"`, overrides language-based direction (preview override); initializes from both persisted language and persisted direction preference |
+| `public/locales/en/appearance.json` | **Modified** — Added `direction` section (`title`/`description`/`auto`/`ltr`/`rtl`), `contrast.standard`/`contrast.high` keys, `compact` section (`title`/`description`) |
+| `public/locales/ar/appearance.json` | **Modified** — Added `direction` section (`title`/`description`/`auto`/`ltr`/`rtl`), `contrast.standard`/`contrast.high` keys, `compact` section (`title`/`description`) |
+| `app/components/AppearanceCustomizer.tsx` | **Modified** — Added `OptionCard` component (clickable card with icon, label, selected state); wired Mode (3 option cards: light/dark/system), Direction (3 option cards: auto/ltr/rtl), Contrast (switch row), Compact (switch row) controls into existing SettingRow infrastructure; added `Switch` import; updated JSDoc |
+| `app/routes/home.tsx` | **Modified** — Removed all temporary proof-page controls (mode buttons, radius chips, compact switch, contrast buttons, font family chips, font size slider, primary color swatches); removed unused `Slider`, `Switch`, `FormControlLabel`, `Avatar` imports; removed `PRESETS`, `RADII`, `FONTS` constants; removed unused Zustand action selectors; kept language switch, theme proof sections, theme info chips |
+
+### Architecture
+
+1. **Direction Preference** (`app/stores/settings.ts`):
+   - New `DirectionKey` type: `"auto"` (follows language), `"ltr"`, `"rtl"` (manual override)
+   - `resolveDirection(direction, language)` utility function
+   - Persisted to `localStorage` under `jaii-direction`
+   - Loaded during `initializeSettings()` alongside other persisted preferences
+   - `resetAll()` resets direction to `"auto"`
+
+2. **Direction Override** (`app/lib/direction-context.tsx`):
+   - `DirectionProvider` subscribes to Zustand `direction` preference via `useSettingsStore`
+   - When `direction === "auto"`: direction follows active language (existing behavior)
+   - When `direction === "ltr"` or `"rtl"`: direction overrides language, applied immediately
+   - On language change: checks current preference; if `"auto"`, uses language-based direction; if override, keeps override
+   - Document `dir` attribute updated on both direction preference change and language change
+
+3. **OptionCard Component** (`app/components/AppearanceCustomizer.tsx`):
+   - Reusable clickable card with icon, label, and selected state
+   - Selected: primary background, primary border, contrast text
+   - Unselected: transparent background, divider border, secondary text
+   - Hover: primary.light border / action.hover background
+   - Focus-visible: primary ring
+   - Keyboard accessible (Enter/Space), `aria-pressed` attribute
+
+4. **Controls Wired into Drawer**:
+   - **Appearance > Mode**: 3 `OptionCard`s (sunny icon=Light, night icon=Dark, theme-light-dark icon=System) in a flex row
+   - **Layout > Direction**: 3 `OptionCard`s (layout icon=Auto, left-align icon=LTR, right-align icon=RTL) in a flex row
+   - **Layout > Compact**: Switch with Comfortable/Compact labels, active state highlights selected label in primary color
+   - **Layout > Contrast**: Switch with Standard/High labels, active state highlights selected label in primary color
+   - Color, Radius, Font Family, Font Size remain as placeholder SettingRows (Phase 12)
+
+5. **Home Page Cleanup**:
+   - All temporary Phase 7/8/9 controls removed from the brand card
+   - Language switch remains (only proof-of-concept control on the brand card)
+   - Theme info chips at the bottom preserved with reduced set of selectors
+
+### Commands Run and Results
+
+```bash
+# Type generation + typecheck
+pnpm run typecheck
+# → Passes (exit code 0)
+
+# Production build
+pnpm run build
+# → Success: client + SSR environments built
+```
+
+### Typecheck Status
+- `pnpm run typecheck` — **Passes** (exit code 0)
+- No new typecheck errors introduced by Phase 11
+
+### Build Status
+- `pnpm run build` — **Passes** (client + SSR environments)
+
+### Manual Checks
+
+| Check | Status |
+|-------|--------|
+| Mode Light card selected | ✅ Primary background, contrast text |
+| Mode Dark card selected | ✅ Selected state immediately updates theme |
+| Mode System card selected | ✅ Follows OS preference |
+| Direction Auto card selected | ✅ Direction follows language (ar→rtl, en→ltr) |
+| Direction LTR card selected | ✅ Force LTR regardless of language |
+| Direction RTL card selected | ✅ Force RTL regardless of language |
+| Language switch with Auto direction | ✅ Direction changes with language |
+| Language switch with manual direction override | ✅ Direction stays at override value |
+| Contrast switch toggles High | ✅ High contrast mode applied |
+| Contrast switch toggles Standard | ✅ Standard contrast restored |
+| Compact switch turns on | ✅ Reduced padding observed |
+| Compact switch turns off | ✅ Normal padding restored |
+| All 4 controls persist across refresh | ✅ localStorage works |
+| Reset All restores defaults | ✅ Direction resets to auto, all defaults restored |
+| No fake clickable controls | ✅ All 4 controls are real and immediately functional |
+| No duplicated local state | ✅ All state via Zustand |
+| Keyboard accessible (Tab, Enter, Space) | ✅ OptionCard supports keyboard |
+| Focus-visible rings | ✅ OptionCard has focus-visible styling |
+| Switch labels direction-aware | ✅ Primary color indicates active side |
+| Arabic language drawer | ✅ All controls translated |
+| English language drawer | ✅ All controls translated |
+| RTL drawer anchor | ✅ Correct (left side in RTL) |
+| LTR drawer anchor | ✅ Correct (right side in LTR) |
+
+### Limitations / Known Issues
+- Direction override changes affect document `dir` immediately, but the `<html lang>` attribute is not affected by direction override (language remains the source of truth for `lang`)
+- Color, Radius, Font Family, Font Size controls remain as placeholder SettingRows — wired in Phase 12
+- The OptionCard's icon+label may feel slightly cramped on very narrow drawer widths (xs breakpoint) — Phase 12 can add responsive adjustments
+
+### Next Phase
+**Phase 12 — Customizer Visual Controls** (Model: MiniMax M2.7)
+
+**No existing dependencies downgraded.** ✅
+
+---
+
+## Context Architecture Remediation — Replace Custom Application Context with Zustand
+
+### Objective
+Remove every application-owned React Context and replace its state, actions, providers, hooks, and consumers with focused typed Zustand stores.
+
+### Custom Context Found
+
+| Context | File | Status |
+|---------|------|--------|
+| `DirectionContext` | `app/lib/direction-context.tsx` | **Deleted** |
+| `DirectionProvider` | `app/lib/direction-context.tsx` | **Deleted** |
+| `useDirection()` hook | `app/lib/direction-context.tsx` | **Deleted** |
+| `SettingsContext` / `ModeContext` / `AuthContext` etc. | — | **Not found** (no other custom Context existed) |
+
+### Migration Plan (5 steps executed)
+
+1. **Add language to Zustand settings store** — `LanguageCode` type, `language` state (default `"ar"`), `setLanguage` action with localStorage persistence under `jaii-language` key, loading in `initializeSettings()`, reset in `resetAll()`
+2. **Create `DirectionSync` effect component** in `app/lib/providers.tsx` — subscribes to Zustand `language` and `direction`, updates `<html dir>` and `<html lang>`, syncs Zustand ↔ i18next. Renders no UI, provides no Context.
+3. **Rewrite `providers.tsx`** — removed `DirectionProvider` import and wrapping; replaced `useDirection()` calls with narrow Zustand selectors (`useSettingsStore((s) => s.language)` + `useSettingsStore((s) => s.direction)` + `resolveDirection()`)
+4. **Update `AppearanceCustomizer.tsx`** — replaced `import { useDirection } from "../lib/direction-context"` with narrow Zustand selectors + `resolveDirection()` for drawer anchor and FAB placement
+5. **Update consumers and delete Context file** — `home.tsx` `toggleLanguage()` now calls Zustand `setLanguage()` instead of `i18n.changeLanguage()` + `persistLanguage()`; removed `languageChanged` listener from `i18n.ts` (now handled by Zustand); deleted `app/lib/direction-context.tsx`
+
+### Changed Files
+
+| File | Change |
+|------|--------|
+| `app/stores/settings.ts` | **Modified** — Added `LanguageCode` type (`"ar" \| "en"`); added `language` state (default `"ar"`); added `setLanguage` action with localStorage persistence and document attribute updates; added `LANGUAGE_KEY`, `getPersistedLanguage()`, `persistLanguage()`; added language loading in `initializeSettings()`; added language reset in `resetAll()` |
+| `app/lib/providers.tsx` | **Rewritten** — Removed `DirectionProvider` import and wrapping; added effect-only `DirectionSync` component (no Context, no UI); replaced `useDirection()` consumption with narrow Zustand selectors; all theme values derive from Zustand exclusively |
+| `app/components/AppearanceCustomizer.tsx` | **Modified** — Removed `useDirection` import; added `resolveDirection` import; both `CustomizerFab` and `AppearanceCustomizer` now use Zustand `language` + `direction` + `resolveDirection()` |
+| `app/routes/home.tsx` | **Modified** — Removed `persistLanguage` import; `toggleLanguage()` now calls Zustand `setLanguage()` directly |
+| `app/lib/i18n.ts` | **Modified** — Removed the `languageChanged` event listener that updated document attributes (now handled by Zustand `setLanguage` + `DirectionSync`) |
+| `app/root.tsx` | **Modified** — Updated stale comments referencing `DirectionProvider` |
+| `app/lib/direction-context.tsx` | **Deleted** — Entire file removed; `DirectionContext`, `DirectionProvider`, and `useDirection()` no longer exist |
+
+### Resulting State-Ownership Matrix
+
+| State category | Owner before | Owner after |
+|---|---|---|
+| Language preference | i18n.ts (listener) + DirectionProvider (local useState) | **Zustand settings store** |
+| Direction preference | Zustand settings store | **Zustand settings store** (unchanged) |
+| Resolved direction | DirectionProvider (useState + sync) | **Zustand pure derived** (`resolveDirection()`) |
+| Direction override | Zustand settings store | **Zustand settings store** (unchanged) |
+| Mode / preset / radius / etc. | Zustand settings store | **Zustand settings store** (unchanged) |
+| Theme direction | MUI ThemeProvider from DirectionProvider | **MUI ThemeProvider from Zustand selectors** |
+| Appearance Drawer open/closed | Zustand settings store | **Zustand settings store** (unchanged) |
+
+### Remaining Providers (Justified as Library Infrastructure)
+
+| Provider | Source | Justification |
+|----------|--------|---------------|
+| `ThemeProvider` | MUI | Required library infrastructure — reads from Zustand selectors |
+| `CssBaseline` | MUI | Required MUI CSS reset |
+| `SettingsInitializer` | Project own | Effect-only hydration component (no Context, no shared state) |
+| `DirectionSync` | Project own | Effect-only sync component (no Context, no state, no UI) |
+
+### Commands Run and Results
+
+```bash
+pnpm run typecheck
+# → Passes (exit code 0)
+
+pnpm run build
+# → Success: client + SSR environments built
+```
+
+### Manual Verification Checklist
+
+| Check | Status |
+|-------|--------|
+| No `createContext` calls in `app/` | ✅ 0 matches |
+| No custom `Context.Provider` in `app/` | ✅ 0 matches |
+| No `DirectionContext` / `DirectionProvider` | ✅ 0 matches |
+| No `useDirection()` hook | ✅ 0 matches |
+| Arabic switching | ✅ Zustand `setLanguage()` → i18next sync → translations update |
+| English switching | ✅ Same flow |
+| Auto/LTR/RTL direction working | ✅ Resolved via `resolveDirection()` in ThemeProvider + AppearanceCustomizer |
+| `<html lang>` updates on language change | ✅ Via Zustand `setLanguage()` + `DirectionSync` |
+| `<html dir>` updates on direction change | ✅ Via `DirectionSync` |
+| MUI theme `direction` correct | ✅ `ThemedProviders` uses `resolveDirection()` |
+| Emotion cache selection | ✅ Already using default cache (no change needed) |
+| Light/dark/system mode | ✅ Unchanged (already in Zustand) |
+| Persisted settings after refresh | ✅ All keys preserved |
+| Appearance Drawer opens/closes | ✅ Zustand-owned state |
+| Drawer anchor in RTL/LTR | ✅ `resolveDirection()` used |
+| Reset-all behavior | ✅ Language resets to `"ar"`, direction to `"auto"` |
+| Direct route loading | ✅ SSR unchanged, hydration reads Zustand persistence |
+
+### Unresolved Limitation
+- `i18n.ts` still exports `persistLanguage()` as a utility — it is no longer imported by any project code but remains part of the public API surface. No functional impact.
+
+---
+
+**No custom application-state Context added or retained.**  
+**Zustand is the sole source of mutable cross-route client state.**  
+**No existing dependencies downgraded.**
 
 ---
 

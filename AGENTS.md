@@ -13,7 +13,7 @@ Repository rules, commands, and agent reference for the Jaii Portal project.
 - **UI Foundation**: MUI Community (free) only
 - **Styling**: Emotion (`@emotion/react`, `@emotion/styled`) + `@mui/stylis-plugin-rtl`
 - **Localization**: i18next + react-i18next + i18next-http-backend (namespaced JSON in `public/locales/{ar,en}/`)
-- **State**: TanStack Query (server), Zustand (UI preferences)
+- **State**: Zustand is the sole owner of mutable cross-route client application state; TanStack Query owns server/mock API state
 - **Charts**: ApexCharts via `apexcharts` + `react-apexcharts`
 - **Maps**: MapLibre GL + `react-map-gl` (MapLibre entry point)
 - **Forms**: React Hook Form + Zod + @hookform/resolvers
@@ -27,15 +27,21 @@ Repository rules, commands, and agent reference for the Jaii Portal project.
 ## 2. Golden Rules (Non-Negotiable)
 
 1. **Preserve completed work** — Never revert or rewrite working phases.
-2. **Never downgrade dependencies** — `package.json` and `pnpm-lock.yaml` are source of truth.
+2. **Never downgrade dependencies** — `package.json` and `pnpm-lock.yaml` are the source of truth.
 3. **Use pnpm only** — No `npm` or `yarn`.
-4. **MUI only** — No shadcn, Radix, Tailwind UI, or other component libraries in new code.
+4. **MUI only** — No shadcn, Radix, Tailwind UI, or competing component libraries in new code.
 5. **MUI Community only** — No Pro/Premium APIs without explicit license confirmation.
-6. **Original composition** — Do not copy Minimal source code, assets, or pixel layouts. Match quality principles only.
-7. **Logical direction-aware styling** — Use logical CSS properties (`margin-inline-start`, `padding-inline-end`, `inset-inline-start`, etc.) in any custom CSS.
-8. **No automated tests in Phase 0** — Typecheck, lint, build, and manual route checks only.
-9. **No phase expansion** — Complete only the current phase scope.
-10. **Prefer editing over creating** — Avoid new files unless absolutely necessary.
+6. **Zustand owns global client state** — Every mutable value shared across routes, layouts, providers, or distant components must live in a focused Zustand store or slice.
+7. **No custom application-state Context** — Do not create or retain `DirectionContext`, `DirectionProvider`, `ColorModeContext`, `ThemeModeContext`, `SettingsContext`, `SidebarContext`, `AuthContext`, `AppContext`, or equivalent providers that own, mirror, synchronize, or proxy application state.
+8. **Library providers are infrastructure only** — MUI `ThemeProvider`, Emotion `CacheProvider`, TanStack `QueryClientProvider`, React Router, and i18next integration may exist, but they must consume Zustand or their own library state and must not become competing application-state stores.
+9. **One source of truth** — Never mirror the same value in Zustand, React Context, and component state. Derive values where possible.
+10. **Use narrow Zustand selectors** — Components must subscribe only to the fields/actions they need. Do not subscribe to the entire store.
+11. **No god store** — Use coherent slices or focused stores with typed state, named actions, defaults, persistence, and migrations.
+12. **Original composition** — Do not copy Minimal source code, assets, or pixel layouts. Match quality principles only.
+13. **Logical direction-aware styling** — Use logical CSS properties (`margin-inline-start`, `padding-inline-end`, `inset-inline-start`, etc.) in custom CSS.
+14. **No automated tests in the current visual roadmap** — Typecheck, lint, build, and manual route checks only until the stabilization phase.
+15. **No phase expansion** — Complete only the current phase scope.
+16. **Prefer editing over creating** — Reuse existing architecture and components; avoid parallel implementations.
 
 ---
 
@@ -71,7 +77,9 @@ Repository rules, commands, and agent reference for the Jaii Portal project.
 | `app/routes/` | Route modules |
 | `app/lib/i18n.ts` | i18next configuration only (no embedded translations) |
 | `app/lib/localization.ts` | SAR currency, Gregorian dates, Saudi phone, Arabic/Latin numerals |
-| `app/lib/utils.ts` | Utility functions (legacy `clsx` + `tailwind-merge` — to be removed) |
+| `app/lib/utils.ts` | Shared utilities |
+| `app/stores/` | Zustand stores and slices; sole location for mutable cross-route client state |
+| `app/stores/settings.ts` | Appearance, direction override, and related persisted UI preferences |
 | `app/welcome/` | Landing page components (Phase 0 placeholder) |
 | `public/locales/ar/` | Arabic translation namespaces (17 JSON files) |
 | `public/locales/en/` | English translation namespaces (17 JSON files) |
@@ -118,7 +126,8 @@ Routes are **explicitly registered** in `app/routes.ts` using `@react/router/dev
 ## 8. Theme & Appearance Preferences (Persisted via Zustand)
 
 Versioned model:
-```
+
+```text
 mode: 'light' | 'dark' | 'system'
 contrast: 'standard' | 'high'
 direction: 'auto' | 'ltr' | 'rtl'
@@ -128,17 +137,8 @@ navColor: 'integrated' | 'apparent'
 primaryPreset: 'emerald' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
 radius: 'compact' | 'balanced' | 'soft' | 'rounded'
 fontFamily: 'public-sans' | 'inter' | 'dm-sans' | 'nunito-sans'
-fontSize: 14..18 (default 16)
+fontSize: 14..18
 ```
-
-Requirements:
-- Apply before first paint (no flash)
-- Persist non-sensitive settings
-- Validate + migrate stored versions
-- Safe fallback on corruption
-- Update MUI theme, Emotion cache, document attributes, responsive nav without full reload
-- Live preview in drawer + dedicated settings route
-
 ---
 
 ## 9. Quality Gates (Every Phase)
@@ -162,16 +162,23 @@ Before marking a phase complete:
 
 ## 10. Prohibited Actions
 
-- ❌ Downgrade any `package.json` dependency version
-- ❌ Add shadcn, Radix, or Tailwind UI components
-- ❌ Use MUI X Pro/Premium APIs without confirmed license
+- ❌ Downgrade any dependency version
+- ❌ Use `npm` or `yarn`
+- ❌ Add shadcn, Radix, Tailwind UI, or another competing UI system
+- ❌ Use MUI X Pro/Premium APIs without a confirmed license
 - ❌ Copy Minimal source code, assets, or layouts
-- ❌ Add automated tests in Phase 0
-- ❌ Expand scope beyond current phase
-- ❌ Use `npm` or `yarn` (pnpm only)
-- ❌ Use physical CSS properties (`margin-left`, `padding-right`) in direction-sensitive contexts
+- ❌ Create or retain custom application-state Context providers
+- ❌ Create `DirectionContext`, `DirectionProvider`, `ColorModeContext`, `ThemeModeContext`, `SettingsContext`, `SidebarContext`, `AuthContext`, or `AppContext`
+- ❌ Mirror the same value across Zustand, Context, and local state
+- ❌ Put cross-route state in component-level `useState`
+- ❌ Use a single unstructured Zustand god store
+- ❌ Subscribe components to the entire Zustand store without justification
+- ❌ Let MUI theme/color-scheme APIs become a competing preference store
+- ❌ Use physical CSS properties in direction-sensitive contexts
 - ❌ Put translation strings in `i18n.ts` or component files
-- ❌ Use generic `translation.json` namespace
+- ❌ Use a generic `translation.json` namespace
+- ❌ Expand scope beyond the current phase
+- ❌ Create a second customizer, navigation system, or theme implementation beside the existing one
 
 ---
 
@@ -204,41 +211,4 @@ pnpm add -D vitest @testing-library/react
 ```
 
 ---
-
-## 12. Phase 0 — Audit Summary
-
-### Confirmed
-- React Router app directory: `app/`
-- Routes file: `app/routes.ts` (single index route → `routes/home.tsx`)
-- Scripts: `build`, `dev`, `start`, `typecheck` present; `lint`, `test`, `storybook` missing
-- MUI packages: `@mui/material@^9.2.0`, `@mui/stylis-plugin-rtl@^9.1.1`
-- RTL packages: `@mui/stylis-plugin-rtl@^9.1.1`, `stylis@^4.4.0`
-- i18n packages: `i18next`, `react-i18next`, `i18next-http-backend` (versions in baseline)
-- i18n config: `app/lib/i18n.ts` (config-only)
-- Translation namespaces: 17 each in `public/locales/{ar,en}/`
-- Localization utilities: `app/lib/localization.ts` (SAR, Gregorian dates, Saudi phone, numerals)
-
-### Flags
-- `lint`, `test`, `test:e2e`, `storybook` scripts missing from `package.json`
-- Tailwind CSS v4 + `@tailwindcss/vite` present in devDependencies (legacy from template) — will be removed
-- `clsx` + `tailwind-merge` used in `app/lib/utils.ts` — legacy, will be removed
-- i18n config uses `load: 'languageOnly'` and `ns: ['common']` — verify namespace loading behavior in Phase 2
-- `@emotion/cache` not installed — required for RTL cache separation (Phase 3)
-- `@iconify/react` not installed (Phase 4)
-- Font packages not installed (Phase 4)
-- Zustand not installed (Phase 9)
-- TanStack Query not installed (Phase 29)
-- MSW not installed (Phase 30)
-- ApexCharts not installed (Phase 24)
-- MapLibre/react-map-gl not installed (Phase 40)
-- React Hook Form/Zod not installed (Phase 27)
-- MUI X Data Grid not installed (Phase 28)
-- Notistack not installed (Phase 22)
-- Terra Draw not installed (Phase 41)
-
-### Next Phase
-**Phase 1 — Root Provider Skeleton** (Model: DeepSeek v4 Flash)
-
----
-
 **No existing dependencies downgraded.** ✅

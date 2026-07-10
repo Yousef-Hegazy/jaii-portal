@@ -1,13 +1,71 @@
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import type { ReactNode } from "react";
 import { useMemo, useEffect, useRef } from "react";
-import { DirectionProvider, useDirection } from "./direction-context";
-import { useSettingsStore, initializeSettings } from "../stores/settings";
+import i18n from "./i18n";
+import {
+  useSettingsStore,
+  initializeSettings,
+  resolveDirection,
+  type LanguageCode,
+} from "../stores/settings";
 import { createJaiiTheme } from "./theme";
 
 /**
+ * DirectionSync — effect-only component.
+ *
+ * Synchronizes document attributes and i18next with Zustand state.
+ * Renders no UI, provides no Context.
+ *
+ * Responsibilities:
+ * - Updates <html dir> when language or direction preference changes
+ * - Updates <html lang> when language changes
+ * - Syncs Zustand language → i18next (when user changes language via the customizer)
+ * - Syncs i18next → Zustand (when language changes externally, e.g. home.tsx toggle)
+ */
+function DirectionSync() {
+  const language = useSettingsStore((s) => s.language);
+  const directionPref = useSettingsStore((s) => s.direction);
+  const setLanguage = useSettingsStore((s) => s.setLanguage);
+
+  // Sync Zustand language → i18next + document attributes
+  useEffect(() => {
+    const dir = resolveDirection(directionPref, language);
+
+    // Update document
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = language === "ar" ? "ar-SA" : "en-US";
+
+      // Only set dir directly if not auto (auto is handled by resolveDirection)
+      document.documentElement.dir = dir;
+    }
+
+    // Sync language to i18next if it differs
+    if (i18n.language !== language) {
+      i18n.changeLanguage(language);
+    }
+  }, [language, directionPref]);
+
+  // Sync i18next → Zustand when language changes externally
+  useEffect(() => {
+    const handleLanguageChanged = (lng: string) => {
+      const currentLang = useSettingsStore.getState().language;
+      if (lng !== currentLang) {
+        setLanguage(lng as LanguageCode);
+      }
+    };
+
+    i18n.on("languageChanged", handleLanguageChanged);
+    return () => {
+      i18n.off("languageChanged", handleLanguageChanged);
+    };
+  }, [setLanguage]);
+
+  return null;
+}
+
+/**
  * Initializes settings after hydration.
- * - Loads persisted mode preference
+ * - Loads persisted preferences
  * - Attaches OS prefers-color-scheme listener
  * - Runs exactly once
  */
@@ -24,11 +82,15 @@ function SettingsInitializer({ children }: { children: ReactNode }) {
 }
 
 /**
- * Inner providers that depend on direction and settings context.
+ * Inner providers that depend on resolved direction and settings.
  * Creates theme with correct direction, mode, and language-aware typography.
+ * All values derived from narrow Zustand selectors — no Context, no local state.
  */
 function ThemedProviders({ children }: { children: ReactNode }) {
-  const { direction, language } = useDirection();
+  // Resolve direction from language preference + direction override
+  const language = useSettingsStore((state) => state.language);
+  const directionPref = useSettingsStore((state) => state.direction);
+  const direction = resolveDirection(directionPref, language);
 
   // Narrow Zustand selectors — only re-renders when relevant state changes
   const resolvedMode = useSettingsStore((state) => state.resolvedMode);
@@ -71,24 +133,21 @@ interface AppProvidersProps {
 
 /**
  * Root application providers.
- * - SettingsInitializer: Hydrates persisted mode + OS listener (Zustand)
- * - DirectionProvider: Syncs direction with i18n language
- * - ThemeProvider: MUI theme with correct direction and mode
- * - CssBaseline: Global CSS reset
  *
- * Custom global-state Context has been removed:
- * ModeContext was replaced by the Zustand `useSettingsStore`.
+ * Provider order:
+ * 1. SettingsInitializer — hydrates persisted preferences (Zustand, runs once)
+ * 2. DirectionSync — syncs document attributes + i18next with Zustand (no Context, no UI)
+ * 3. ThemedProviders — MUI ThemeProvider + CssBaseline, derives values from Zustand
  *
- * Note: No custom CacheProvider is used. Both SSR and client
- * rely on the default Emotion cache, preventing class name
- * prefix mismatches that cause hydration errors.
+ * No custom application-state Context exists.
+ * Library providers (ThemeProvider, CssBaseline) remain as infrastructure only.
+ * No custom CacheProvider — SSR and client share the default Emotion cache.
  */
 export default function AppProviders({ children }: AppProvidersProps) {
   return (
     <SettingsInitializer>
-      <DirectionProvider>
-        <ThemedProviders>{children}</ThemedProviders>
-      </DirectionProvider>
+      <DirectionSync />
+      <ThemedProviders>{children}</ThemedProviders>
     </SettingsInitializer>
   );
 }

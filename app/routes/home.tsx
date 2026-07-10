@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import i18n from "../lib/i18n";
-import { persistLanguage } from "../lib/i18n";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
@@ -19,9 +18,6 @@ import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Divider from "@mui/material/Divider";
-import Slider from "@mui/material/Slider";
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -33,48 +29,14 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import Avatar from "@mui/material/Avatar";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { TYPOGRAPHY_SCALE } from "../lib/typography";
 import { useTheme } from "@mui/material/styles";
-import {
-  useSettingsStore,
-  type Mode,
-  type PrimaryPresetKey,
-  type RadiusKey,
-  type FontFamilyKey,
-  type ContrastKey,
-} from "../stores/settings";
+import { useSettingsStore } from "../stores/settings";
+import AppearanceCustomizer from "../components/AppearanceCustomizer";
 
 import type { Route } from "./+types/home";
-
-// ---------------------------------------------------------------------------
-// Constants
-// ---------------------------------------------------------------------------
-
-const PRESETS: { key: PrimaryPresetKey; hex: string; labelEn: string; labelAr: string }[] = [
-  { key: "emerald", hex: "#00A76F", labelEn: "Emerald", labelAr: "زمردي" },
-  { key: "cyan", hex: "#078DEE", labelEn: "Cyan", labelAr: "سماوي" },
-  { key: "purple", hex: "#7635DC", labelEn: "Purple", labelAr: "أرجواني" },
-  { key: "blue", hex: "#0C68E9", labelEn: "Blue", labelAr: "أزرق" },
-  { key: "orange", hex: "#FDA92D", labelEn: "Orange", labelAr: "برتقالي" },
-  { key: "red", hex: "#FF3030", labelEn: "Red", labelAr: "أحمر" },
-];
-
-const RADII: { key: RadiusKey; labelEn: string; labelAr: string }[] = [
-  { key: "compact", labelEn: "Compact", labelAr: "مضغوط" },
-  { key: "balanced", labelEn: "Balanced", labelAr: "متوازن" },
-  { key: "soft", labelEn: "Soft", labelAr: "ناعم" },
-  { key: "rounded", labelEn: "Rounded", labelAr: "مدور" },
-];
-
-const FONTS: { key: FontFamilyKey; labelEn: string; labelAr: string }[] = [
-  { key: "public-sans", labelEn: "Public Sans", labelAr: "Public Sans" },
-  { key: "inter", labelEn: "Inter", labelAr: "Inter" },
-  { key: "dm-sans", labelEn: "DM Sans", labelAr: "DM Sans" },
-  { key: "nunito-sans", labelEn: "Nunito Sans", labelAr: "Nunito Sans" },
-];
 
 // Sample navigation items for proof
 const NAV_ITEMS = [
@@ -114,29 +76,17 @@ export default function Home() {
   const currentLang = i18n.language;
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  // Narrow Zustand selectors
+  // Narrow Zustand selectors for theme info display
   const mode = useSettingsStore((s) => s.mode);
   const resolvedMode = useSettingsStore((s) => s.resolvedMode);
   const primaryPreset = useSettingsStore((s) => s.primaryPreset);
-  const radius = useSettingsStore((s) => s.radius);
   const compact = useSettingsStore((s) => s.compact);
   const contrast = useSettingsStore((s) => s.contrast);
-  const fontFamily = useSettingsStore((s) => s.fontFamily);
-  const fontSize = useSettingsStore((s) => s.fontSize);
-
-  // Actions
-  const setMode = useSettingsStore((s) => s.setMode);
-  const setPrimaryPreset = useSettingsStore((s) => s.setPrimaryPreset);
-  const setRadius = useSettingsStore((s) => s.setRadius);
-  const setCompact = useSettingsStore((s) => s.setCompact);
-  const setContrast = useSettingsStore((s) => s.setContrast);
-  const setFontFamily = useSettingsStore((s) => s.setFontFamily);
-  const setFontSize = useSettingsStore((s) => s.setFontSize);
+  const setLanguage = useSettingsStore((s) => s.setLanguage);
 
   const toggleLanguage = () => {
     const nextLang = currentLang === "ar" ? "en" : "ar";
-    i18n.changeLanguage(nextLang);
-    persistLanguage(nextLang);
+    setLanguage(nextLang);
   };
 
   const handleDialogOpen = () => setDialogOpen(true);
@@ -166,7 +116,7 @@ export default function Home() {
         pb: 10,
       }}
     >
-      {/* ── Brand Card with All Temporary Controls ── */}
+      {/* ── Brand Card ── */}
       <Card sx={{ maxWidth: 720, width: "100%" }}>
         <CardContent sx={{ textAlign: "center", py: 4, px: 4 }}>
           <Typography variant="h4" component="h1" gutterBottom>
@@ -180,7 +130,7 @@ export default function Home() {
           </Button>
 
           {/* Language switch */}
-          <Box sx={{ display: "flex", gap: 1, justifyContent: "center", mb: 2 }}>
+          <Box sx={{ display: "flex", gap: 1, justifyContent: "center" }}>
             <Button
               size="small"
               variant={currentLang === "ar" ? "contained" : "outlined"}
@@ -197,199 +147,6 @@ export default function Home() {
             >
               English
             </Button>
-          </Box>
-
-          {/* Mode switch */}
-          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.5 }}>
-            {currentLang === "ar" ? "الوضع" : "Mode"}
-          </Typography>
-          <Box sx={{ display: "flex", gap: 1, justifyContent: "center", mb: 2 }}>
-            {(["light", "dark", "system"] as Mode[]).map((m) => (
-              <Button
-                key={m}
-                size="small"
-                variant={mode === m ? "contained" : "outlined"}
-                onClick={() => setMode(m)}
-                sx={{ minWidth: 48, fontSize: "12px" }}
-              >
-                {m === "light"
-                  ? currentLang === "ar"
-                    ? "فاتح"
-                    : "Light"
-                  : m === "dark"
-                    ? currentLang === "ar"
-                      ? "داكن"
-                      : "Dark"
-                    : currentLang === "ar"
-                      ? "تلقائي"
-                      : "System"}
-              </Button>
-            ))}
-          </Box>
-
-          <Divider sx={{ mb: 2 }} />
-
-          {/* ═══ Phase 9 Controls ═══ */}
-
-          {/* Radius selector */}
-          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.5 }}>
-            {currentLang === "ar" ? "نصف القطر" : "Radius"}
-          </Typography>
-          <Box sx={{ display: "flex", gap: 1, justifyContent: "center", mb: 2, flexWrap: "wrap" }}>
-            {RADII.map((r) => (
-              <Chip
-                key={r.key}
-                label={currentLang === "ar" ? r.labelAr : r.labelEn}
-                size="small"
-                color={radius === r.key ? "primary" : "default"}
-                variant={radius === r.key ? "filled" : "outlined"}
-                onClick={() => setRadius(r.key)}
-                sx={{ cursor: "pointer", minWidth: 64 }}
-              />
-            ))}
-          </Box>
-
-          {/* Compact toggle */}
-          <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={compact}
-                  onChange={(_, checked) => setCompact(checked)}
-                  size="small"
-                />
-              }
-              label={
-                <Typography variant="caption">
-                  {currentLang === "ar" ? "وضع مضغوط" : "Compact mode"}
-                </Typography>
-              }
-            />
-          </Box>
-
-          {/* Contrast selector */}
-          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.5 }}>
-            {currentLang === "ar" ? "التباين" : "Contrast"}
-          </Typography>
-          <Box sx={{ display: "flex", gap: 1, justifyContent: "center", mb: 2 }}>
-            {(["standard", "high"] as ContrastKey[]).map((c) => (
-              <Button
-                key={c}
-                size="small"
-                variant={contrast === c ? "contained" : "outlined"}
-                onClick={() => setContrast(c)}
-                sx={{ minWidth: 64, fontSize: "12px" }}
-              >
-                {currentLang === "ar"
-                  ? c === "standard"
-                    ? "قياسي"
-                    : "عالٍ"
-                  : c === "standard"
-                    ? "Standard"
-                    : "High"}
-              </Button>
-            ))}
-          </Box>
-
-          {/* Font family selector */}
-          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.5 }}>
-            {currentLang === "ar" ? "الخط" : "Font Family"}
-          </Typography>
-          <Box sx={{ display: "flex", gap: 1, justifyContent: "center", mb: 2, flexWrap: "wrap" }}>
-            {FONTS.map((f) => (
-              <Chip
-                key={f.key}
-                label={currentLang === "ar" ? f.labelAr : f.labelEn}
-                size="small"
-                color={fontFamily === f.key ? "primary" : "default"}
-                variant={fontFamily === f.key ? "filled" : "outlined"}
-                onClick={() => setFontFamily(f.key)}
-                sx={{ cursor: "pointer" }}
-              />
-            ))}
-          </Box>
-
-          {/* Font size slider */}
-          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.5 }}>
-            {currentLang === "ar" ? "حجم الخط" : "Font Size"}: {fontSize}px
-          </Typography>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2, px: 2, mb: 2 }}>
-            <Typography variant="caption" color="text.secondary">14</Typography>
-            <Slider
-              value={fontSize}
-              min={14}
-              max={18}
-              step={1}
-              marks
-              onChange={(_, val) => setFontSize(val as number)}
-              size="small"
-              sx={{ flex: 1 }}
-            />
-            <Typography variant="caption" color="text.secondary">18</Typography>
-          </Box>
-
-          <Divider sx={{ mb: 2 }} />
-
-          {/* Primary preset selector */}
-          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.5 }}>
-            {currentLang === "ar" ? "اللون الأساسي" : "Primary Color"}
-          </Typography>
-          <Box sx={{ display: "flex", gap: 1, justifyContent: "center", flexWrap: "wrap" }}>
-            {PRESETS.map((preset) => (
-              <Tooltip
-                key={preset.key}
-                title={
-                  currentLang === "ar"
-                    ? `${preset.labelAr} (${preset.hex})`
-                    : `${preset.labelEn} (${preset.hex})`
-                }
-              >
-                <Box
-                  component="button"
-                  onClick={() => setPrimaryPreset(preset.key)}
-                  onKeyDown={(e: React.KeyboardEvent) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setPrimaryPreset(preset.key);
-                    }
-                  }}
-                  aria-label={`${preset.labelEn} preset`}
-                  tabIndex={0}
-                  sx={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: "50%",
-                    border: 2,
-                    borderColor:
-                      primaryPreset === preset.key ? "primary.main" : "transparent",
-                    backgroundColor: preset.hex,
-                    cursor: "pointer",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    outline: "none",
-                    transition: "border-color 0.2s",
-                    "&:hover": {
-                      borderColor: "text.secondary",
-                    },
-                    "&:focus-visible": {
-                      boxShadow: `0 0 0 3px ${theme.palette.primary.main}40`,
-                    },
-                  }}
-                >
-                  {primaryPreset === preset.key && (
-                    <Icon
-                      icon="mdi:check"
-                      width={14}
-                      height={14}
-                      color={
-                        preset.key === "orange" ? "rgba(0,0,0,0.6)" : "#FFFFFF"
-                      }
-                    />
-                  )}
-                </Box>
-              </Tooltip>
-            ))}
           </Box>
         </CardContent>
       </Card>
@@ -659,11 +416,8 @@ export default function Home() {
                 <Chip size="small" label={`preset: ${primaryPreset}`} variant="outlined"
                   sx={{ borderColor: theme.palette.primary.main, color: theme.palette.primary.main }} />
                 <Chip size="small" label={theme.palette.primary.main} variant="outlined" />
-                <Chip size="small" label={`radius: ${theme.shape.borderRadius}px`} variant="outlined" />
                 <Chip size="small" label={`compact: ${compact ? "on" : "off"}`} variant="outlined" />
                 <Chip size="small" label={`contrast: ${contrast}`} variant="outlined" />
-                <Chip size="small" label={`font: ${fontFamily}`} variant="outlined" />
-                <Chip size="small" label={`size: ${fontSize}px`} variant="outlined" />
                 <Chip size="small" label={`direction: ${theme.direction}`} variant="outlined" />
               </Box>
             </Paper>
@@ -675,7 +429,7 @@ export default function Home() {
       <Card sx={{ maxWidth: 720, width: "100%" }}>
         <CardContent sx={{ py: 4, px: 4 }}>
           <Typography variant="overline" color="text.secondary" sx={{ mb: 2, display: "block" }}>
-            {currentLang === "ar" ? "الطباعة" : "Typography"} — {currentLang === "ar" ? "الخط الحالي" : "Active font"}: {fontFamily}
+            {currentLang === "ar" ? "الطباعة" : "Typography"}
           </Typography>
 
           <Stack spacing={2} sx={{ mt: 2 }}>
@@ -917,6 +671,9 @@ export default function Home() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* ── Floating Appearance Customizer ── */}
+      <AppearanceCustomizer />
     </Box>
   );
 }

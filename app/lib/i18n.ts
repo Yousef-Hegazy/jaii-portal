@@ -86,18 +86,6 @@ if (import.meta.env.SSR) {
 export default i18n;
 
 // ============================================================================
-// Language Change Listener — updates document attributes
-// ============================================================================
-
-i18n.on("languageChanged", (lng: string) => {
-  if (typeof document === "undefined") return;
-  const dir = lng === "ar" ? "rtl" : "ltr";
-  const docLocale = lng === "ar" ? "ar-SA" : "en-US";
-  document.documentElement.lang = docLocale;
-  document.documentElement.dir = dir;
-});
-
-// ============================================================================
 // Language Utilities
 // ============================================================================
 

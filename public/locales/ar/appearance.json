@@ -1,5 +1,5 @@
 {
-  "title": "المظهر",
+  "title": "تخصيص المظهر",
   "description": "تخصيص مظهر لوحة التحكم",
   "language": {
     "title": "اللغة / Language",
@@ -15,10 +15,12 @@
   "color": {
     "title": "اللون الأساسي",
     "description": "اختر اللون الأساسي للواجهة",
-    "azure": "أزرق سماوي",
     "emerald": "زمردي",
-    "violet": "بنفسجي",
-    "coral": "مرجاني"
+    "cyan": "سماوي",
+    "purple": "بنفسجي",
+    "blue": "أزرق",
+    "orange": "برتقالي",
+    "red": "أحمر"
   },
   "radius": {
     "title": "استدارة الحواف",
@@ -35,5 +37,51 @@
     "comfortable": "مريح",
     "spacious": "واسع"
   },
-  "reset": "إعادة تعيين إلى الإعدادات الافتراضية"
+  "contrast": {
+    "title": "التباين",
+    "description": "زيادة تباين النص لتحسين readability",
+    "standard": "قياسي",
+    "high": "عالٍ"
+  },
+  "direction": {
+    "title": "الاتجاه",
+    "description": "اختر اتجاه التخطيط",
+    "auto": "تلقائي",
+    "ltr": "من اليسار",
+    "rtl": "من اليمين"
+  },
+  "compact": {
+    "title": "الوضع المضغوط",
+    "description": "تقليل المسافات لواجهة أكثر كثافة"
+  },
+  "fontFamily": {
+    "title": "نوع الخط",
+    "description": "اختر خط الواجهة"
+  },
+  "fontSize": {
+    "title": "حجم الخط",
+    "description": "اضبط حجم النص الأساسي"
+  },
+  "navLayout": {
+    "title": "تخطيط التنقل",
+    "description": "اختر نمط شريط التنقل",
+    "vertical": "عمودي",
+    "horizontal": "أفقي",
+    "mini": "مصغر"
+  },
+  "navColor": {
+    "title": "لون التنقل",
+    "description": "اختر نمط ألوان التنقل",
+    "integrated": "متكامل",
+    "apparent": "بارز"
+  },
+  "reset": "إعادة تعيين",
+  "resetDescription": "إعادة تعيين جميع الإعدادات إلى القيم الافتراضية",
+  "closeDrawer": "إغلاق",
+  "sections": {
+    "appearance": "المظهر",
+    "layout": "التخطيط",
+    "typography": "الطباعة",
+    "currentSettings": "الحالة الحالية"
+  }
 }

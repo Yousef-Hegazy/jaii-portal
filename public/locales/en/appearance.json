@@ -15,10 +15,12 @@
   "color": {
     "title": "Primary Color",
     "description": "Choose the primary color for the interface",
-    "azure": "Azure",
     "emerald": "Emerald",
-    "violet": "Violet",
-    "coral": "Coral"
+    "cyan": "Cyan",
+    "purple": "Purple",
+    "blue": "Blue",
+    "orange": "Orange",
+    "red": "Red"
   },
   "radius": {
     "title": "Border Radius",
@@ -35,5 +37,51 @@
     "comfortable": "Comfortable",
     "spacious": "Spacious"
   },
-  "reset": "Reset to defaults"
+  "contrast": {
+    "title": "Contrast",
+    "description": "Increase text contrast for better readability",
+    "standard": "Standard",
+    "high": "High"
+  },
+  "direction": {
+    "title": "Direction",
+    "description": "Choose layout direction",
+    "auto": "Auto",
+    "ltr": "LTR",
+    "rtl": "RTL"
+  },
+  "compact": {
+    "title": "Compact Mode",
+    "description": "Reduce spacing for a denser interface"
+  },
+  "fontFamily": {
+    "title": "Font Family",
+    "description": "Choose the interface font"
+  },
+  "fontSize": {
+    "title": "Font Size",
+    "description": "Adjust the base text size"
+  },
+  "navLayout": {
+    "title": "Navigation Layout",
+    "description": "Choose the navigation bar style",
+    "vertical": "Vertical",
+    "horizontal": "Horizontal",
+    "mini": "Mini"
+  },
+  "navColor": {
+    "title": "Navigation Color",
+    "description": "Choose the navigation color style",
+    "integrated": "Integrated",
+    "apparent": "Apparent"
+  },
+  "reset": "Reset",
+  "resetDescription": "Reset all settings to their default values",
+  "closeDrawer": "Close",
+  "sections": {
+    "appearance": "Appearance",
+    "layout": "Layout",
+    "typography": "Typography",
+    "currentSettings": "Current Settings"
+  }
 }

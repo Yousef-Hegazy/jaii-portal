@@ -11,13 +11,19 @@
 - Mock-first data
 - Demo authentication for now
 - Landing page and admin dashboard in the same repository
-- No Minimal license; its public demo and supplied screenshots are visual references only
+- No Minimal license; its public demo and repository screenshots under `docs/references` are visual references only
 - Public Sans for English and Tajawal for Arabic by default
 - ApexCharts through `apexcharts` and `react-apexcharts`
 - No automated test implementation during this roadmap
 - Quality gates are typecheck, lint, build, direct-route checks, and manual visual review
 
 The landing page and dashboard remain in one app because they share the same theme, localization, preference store, icons, typography, and brand language. React Router route-level splitting will keep the public bundle separate from dashboard-heavy modules.
+
+---
+
+## Revision note
+
+This version removes ambiguous phrases such as “provided images” and “supplied references.” Every phase that depends on the theme-customizer images now names their exact repository paths and must fail fast when they are unavailable.
 
 ---
 
@@ -31,6 +37,27 @@ For every phase:
 4. Do not paste previous phase prompts.
 5. Do not continue while the current phase gate is visibly failing.
 6. Save screenshots after visual phases so later agents can compare rather than redesign blindly.
+
+---
+
+# Repository visual-reference contract
+
+The theme-customizer reference images are repository assets, not chat attachments:
+
+- `docs/references/theme-customizer-overview.png`
+- `docs/references/theme-customizer-presets-fonts.png`
+
+Rules for every phase that names either file:
+
+1. Open and visually inspect the exact file path before planning or editing.
+2. Do not rely on memory, the public Minimal website, previous chat images, filenames alone, or another agent’s description.
+3. If a required file is missing or unreadable, stop and report the exact missing path. Do not invent a substitute design.
+4. Use the images for visual hierarchy, density, interaction anatomy, option-card treatment, swatches, typography controls, and overall quality—not for copying source code, proprietary assets, exact dimensions, or exact layout.
+5. Record the inspected paths in `docs/IMPLEMENTATION_STATUS.md`.
+6. Existing Jaii theme tokens, Zustand state, translations, RTL engine, and MUI primitives remain authoritative.
+7. A later phase must reuse established customizer components rather than creating a second implementation.
+
+These images are **required** in Phases 10, 11, 12, 13, and 49. They are also required for the customizer-specific portion of Phase 50.
 
 ---
 
@@ -442,23 +469,81 @@ Do not mirror the same values in component state or React Context. Local compone
 
 **Model:** `minimax/minimax-m2.7`  
 **Cost:** Visual spend  
-**Outcome:** Beautiful Minimal-quality customizer shell
+**Outcome:** Functional, premium Minimal-quality customizer shell
+
+### Required repository reference files
+
+These files must exist before the agent edits UI code:
+
+- `docs/references/theme-customizer-overview.png`
+- `docs/references/theme-customizer-presets-fonts.png`
+
+The agent must open and inspect both images directly. If either file is missing or unreadable, stop and report the missing path instead of inventing a design.
 
 ```text
-Design the floating appearance Fab and responsive MUI Drawer using the supplied customization screenshots as quality references.
+Repair or implement the Phase 10 floating appearance trigger and customizer Drawer.
 
-Implement only the shell:
-- translated floating trigger
-- logical RTL/LTR edge
-- responsive drawer width
-- title, reset button, close button
-- scrollable grouped sections
-- elegant cards, labels, icons, spacing, and dividers
+Before editing:
+1. Open and visually inspect:
+   - `docs/references/theme-customizer-overview.png`
+   - `docs/references/theme-customizer-presets-fonts.png`
+2. If either file is missing, stop. Do not guess from the words “Minimal” or “premium.”
+3. Inspect the existing Zustand settings store, MUI theme, direction engine, translations, and any current customizer code.
+4. Preserve working Phase 1–9 behavior.
 
-Use original Jaii styling. The drawer open state and reset action must use Zustand. Connect the reset button, but leave detailed controls to the next two phases. Do not create a drawer/settings Context.
+Use the references only for visual quality and interaction anatomy:
+- slim floating square/rounded trigger on the logical viewport edge
+- compact settings Drawer with generous whitespace
+- clear title row with close and reset actions
+- small uppercase/overline group labels
+- visual option cards with strong selected states
+- restrained borders and shadows
+- color swatches with readable labels/hex values
+- compact typography controls and slider styling
+
+Do not copy Minimal source, assets, exact dimensions, or exact layout. Create an original Jaii implementation.
+
+Implement a fully functional shell:
+- floating MUI Fab or custom MUI button using Iconify settings icon
+- fixed logical positioning:
+  - right side in LTR
+  - left side in RTL
+- desktop and mobile safe-area spacing
+- translated tooltip and accessible name
+- Zustand-owned open/closed state
+- responsive temporary MUI Drawer
+- desktop width approximately 360–400 px
+- mobile width 100% or near-full width
+- correct Drawer anchor in RTL/LTR
+- sticky header with translated title, reset-all action, and close action
+- scrollable body
+- grouped section containers prepared for Phases 11–12
+- a live read-only summary of current Zustand settings so the drawer is not an empty shell
+- reset-all action connected to the real Zustand reset action
+- close by button, Escape, backdrop click, and successful reset feedback where appropriate
+- focus enters the Drawer and returns to the floating trigger after close
+- no custom React Context
+- no duplicate local source of truth for drawer state or appearance values
+
+Repair requirements:
+- Remove or refactor the current broken/abomination implementation rather than layering another customizer beside it.
+- Reuse existing theme tokens and MUI primitives.
+- Do not hard-code physical left/right CSS; derive position and anchor from direction.
+- Do not implement detailed editable controls yet; those remain Phases 11–12.
+- Do not leave fake clickable controls that do nothing.
+
+Manual validation:
+- trigger opens the Drawer
+- every close method works
+- reset changes the actual Zustand settings
+- direct refresh preserves expected settings
+- Arabic opens from the correct side and uses translated labels
+- English opens from the opposite side
+- light and dark modes both look polished
+- small phone has no overflow or covered primary controls
 ```
 
-**Gate:** The trigger and drawer already look like a premium template in Arabic and English.
+**Gate:** `docs/references/theme-customizer-overview.png` and `docs/references/theme-customizer-presets-fonts.png` were both opened and inspected; the floating trigger, Drawer, close behavior, focus restoration, RTL/LTR anchor, and real Zustand reset all work. The shell is visibly informed by those files rather than improvised.
 
 ---
 
@@ -468,17 +553,39 @@ Use original Jaii styling. The drawer open state and reset action must use Zusta
 **Cost:** Very low  
 **Outcome:** Core controls inside the real drawer
 
+### Required repository references
+
+- `docs/references/theme-customizer-overview.png`
+- `docs/references/theme-customizer-presets-fonts.png`
+
 ```text
-Connect these existing Zustand preferences and actions to polished controls inside the customizer:
+Open and visually inspect both required repository reference images before editing. If either file is missing or unreadable, stop and report the exact path.
+
+Connect these existing Zustand preferences and actions to polished controls inside the existing Phase 10 customizer:
 - light/dark/system
 - standard/high contrast
 - auto/LTR/RTL direction
 - compact off/on
 
-Remove their temporary proof-page controls. Use visual option cards and switches consistent with the drawer design. Direction Auto follows language; manual direction is a preview override.
+Use `docs/references/theme-customizer-overview.png` as the primary reference for:
+- mode option-card proportions
+- selected-state treatment
+- contrast and compact switch rows
+- direction option thumbnails
+- section labels, spacing, borders, and control density
+
+Use `docs/references/theme-customizer-presets-fonts.png` only as a secondary consistency reference for section rhythm and typography.
+
+Requirements:
+- reuse the Phase 10 Drawer, sections, Zustand store, translations, and theme tokens
+- remove temporary proof-page controls after the real drawer controls work
+- Direction Auto follows language; manual direction is a preview override
+- controls must be real and immediately functional
+- no fake cards, duplicated local state, custom Context, or second customizer
+- preserve keyboard, focus, mobile, RTL/LTR, reset, and persistence behavior
 ```
 
-**Gate:** All four controls work immediately, persist, and remain usable in RTL.
+**Gate:** Both exact reference files were inspected; all four controls work immediately, persist, reset correctly, and remain usable in RTL/LTR without creating a second customizer.
 
 ---
 
@@ -488,8 +595,15 @@ Remove their temporary proof-page controls. Use visual option cards and switches
 **Cost:** Visual spend  
 **Outcome:** Complete premium customizer
 
+### Required repository references
+
+- `docs/references/theme-customizer-overview.png`
+- `docs/references/theme-customizer-presets-fonts.png`
+
 ```text
-Add polished controls for:
+Open and visually inspect both required repository reference images before planning or editing. If either file is missing or unreadable, stop and report the exact path.
+
+Extend the existing Phase 10–11 customizer with polished controls for:
 - vertical/horizontal/mini navigation preview options
 - integrated/apparent navigation color
 - six color presets
@@ -497,10 +611,32 @@ Add polished controls for:
 - four font-family choices
 - 14–18 px font-size slider
 
-Use visual thumbnails and swatches inspired by the supplied references but with original Jaii artwork. Connect every option directly to narrow Zustand selectors/actions; do not duplicate values in local state except for transient slider interaction.
+Use `docs/references/theme-customizer-overview.png` as the primary reference for:
+- navigation-layout thumbnails
+- navigation-color treatment cards
+- compact option-card grids
+- selected indicators and grouping
+
+Use `docs/references/theme-customizer-presets-fonts.png` as the primary reference for:
+- labeled color swatches and hex presentation
+- radius choice cards
+- font-family preview cards
+- font-size slider composition
+- vertical spacing between groups
+
+Create original Jaii thumbnails and artwork. Do not copy proprietary assets, exact layouts, or dimensions.
+
+Requirements:
+- reuse the existing Drawer and control components
+- connect every option directly to narrow Zustand selectors/actions
+- no duplicated local source of truth except transient slider draft state
+- every option must immediately affect real proof UI
+- every option must persist and participate in reset-all
+- maintain light/dark, Arabic/English, RTL/LTR, keyboard, and mobile behavior
+- do not add inactive or decorative controls
 ```
 
-**Gate:** The complete customizer is visually impressive and every option visibly changes the proof UI.
+**Gate:** Both exact reference files were inspected; the completed customizer is visually coherent with their quality and every option changes real UI, persists, resets, and works in RTL/LTR.
 
 ---
 
@@ -510,13 +646,28 @@ Use visual thumbnails and swatches inspired by the supplied references but with 
 **Cost:** Very low  
 **Outcome:** Permanent full-page customization route
 
+### Required repository references
+
+- `docs/references/theme-customizer-overview.png`
+- `docs/references/theme-customizer-presets-fonts.png`
+
 ```text
+Open and visually inspect both required repository reference images before editing. If either file is missing or unreadable, stop and report the exact path.
+
 Register `/dashboard/settings/appearance`.
 
-Create a clean settings page that reuses the same controls and store as the floating drawer, plus a larger live preview of a card, form, status chips, navigation sample, and small chart placeholder. Do not duplicate preference logic.
+Create a clean full-page settings experience that:
+- reuses the exact control components, Zustand selectors/actions, translations, and theme tokens from the floating Drawer
+- does not fork, copy, or reimplement preference logic
+- preserves the visual hierarchy established from the two reference images
+- includes a larger live preview of a card, form, status chips, navigation sample, and small chart placeholder
+- keeps drawer and page values synchronized in real time
+- supports reset, persistence, Arabic/English, RTL/LTR, light/dark, keyboard, and responsive layouts
+
+The reference files guide the settings-card hierarchy and control presentation only. The route composition must remain original to Jaii.
 ```
 
-**Gate:** Direct URL works and drawer/page stay synchronized.
+**Gate:** Both exact reference files were inspected; the direct URL works; the route reuses the same controls; Drawer and page remain synchronized with no duplicated state or logic.
 
 ---
 
@@ -1369,7 +1520,14 @@ Do not redesign unrelated screens.
 **Cost:** Visual spend  
 **Outcome:** Customizer combinations remain beautiful
 
+### Required repository references
+
+- `docs/references/theme-customizer-overview.png`
+- `docs/references/theme-customizer-presets-fonts.png`
+
 ```text
+Open and visually inspect both required repository reference images before reviewing the application. If either file is missing or unreadable, stop and report the exact path.
+
 Visually review and refine the full appearance matrix:
 - light/dark
 - standard/high contrast
@@ -1380,10 +1538,14 @@ Visually review and refine the full appearance matrix:
 - vertical/mini/horizontal nav
 - integrated/apparent nav
 
-Fix only inconsistencies in tokens, component overrides, contrast, spacing, and customizer previews.
+Compare the customizer’s hierarchy, density, swatches, option cards, typography controls, spacing, and selected states against:
+- `docs/references/theme-customizer-overview.png`
+- `docs/references/theme-customizer-presets-fonts.png`
+
+Fix only inconsistencies in tokens, component overrides, contrast, spacing, customizer previews, and broken combinations. Preserve Jaii’s original composition and do not copy Minimal assets or exact layout.
 ```
 
-**Gate:** No selectable combination looks unfinished or broken.
+**Gate:** Both exact reference files were inspected; no selectable combination looks unfinished, broken, unreadable, or visually disconnected from the established customizer quality.
 
 ---
 
@@ -1401,10 +1563,16 @@ Review all public and dashboard routes at:
 - laptop
 - wide desktop
 
-Fix horizontal overflow, toolbar wrapping, card grids, chart sizing, Data Grid fallbacks, Drawer widths, navigation transitions, and long Arabic labels. Do not add new features.
+For the appearance customizer specifically, first open and inspect:
+- `docs/references/theme-customizer-overview.png`
+- `docs/references/theme-customizer-presets-fonts.png`
+
+If either customizer reference is missing or unreadable, stop the customizer portion and report the exact path rather than guessing.
+
+Fix horizontal overflow, toolbar wrapping, card grids, chart sizing, Data Grid fallbacks, Drawer widths, navigation transitions, long Arabic labels, customizer scrolling, floating-trigger safe-area placement, option-card wrapping, swatch layout, and font-slider usability. Do not add new features.
 ```
 
-**Gate:** Every route is usable and attractive at the target sizes.
+**Gate:** Every route is usable and attractive at the target sizes; the customizer remains faithful to the two exact repository references without clipping, overflow, or unusable controls.
 
 ---
 
