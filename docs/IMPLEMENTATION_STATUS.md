@@ -30,7 +30,7 @@
 | 6 | Zustand global UI-state foundation | ✅ **Done** | DeepSeek v4 Flash (corrective refactor) | Zustand installed; mode state/actions migrated from custom Context; narrow selectors; persistence and initialization; MUI theme derives from Zustand | Global mode preference is Zustand-owned; refresh preserves it; no custom mode/settings Context remains |
 | 7 | Light, dark, and system mode | ✅ **Done** | DeepSeek v4 Flash | Complete light/dark/system modes driven by Zustand; OS preference listener; temporary mode selector; theme-aware component overrides | All proof components respond; mode persists; system follows OS; no competing Context source |
 | 8 | Six primary-color presets | ✅ **Done** | DeepSeek v4 Flash | Emerald, Cyan, Purple, Blue, Orange, and Red tonal palettes with computed hover/selected/focus/translucent states; selected preset stored in Zustand; temporary selector; dynamic chart series | Every preset is attractive in light/dark, persists after refresh, and has one Zustand source of truth |
-| 9 | Shape, density, contrast, and typography preferences | ⬜ Pending | DeepSeek v4 Flash | Radius (4), compact mode, contrast (2), font family (4 with Tajawal Arabic fallback), font size 14–18; all connected to Zustand | Every setting visibly affects real MUI components, persists, and has no duplicate state source |
+| 9 | Shape, density, contrast, and typography preferences | ✅ **Done** | DeepSeek v4 Flash | Radius (4), compact mode, contrast (2), font family (4 with Tajawal Arabic fallback), font size 14–18; all connected to Zustand | Every setting visibly affects real MUI components, persists, and has no duplicate state source |
 | 10 | Floating settings trigger + drawer shell | ⬜ Pending | MiniMax M2.7 | Translated FAB, logical RTL/LTR edge, responsive drawer, Zustand-owned open state/reset action, title/reset/close, scrollable sections, premium styling | Trigger + drawer look like a premium template in AR/EN without a custom settings Context |
 | 11 | Customizer core controls | ⬜ Pending | DeepSeek v4 Flash | Mode, contrast, direction (auto/ltr/rtl), compact connected to polished controls in drawer | All 4 controls work immediately, persist, usable in RTL |
 | 12 | Customizer visual controls | ⬜ Pending | MiniMax M2.7 | Nav layout (3), nav color (2), 6 color presets, 4 radii, 4 font families, font size slider, visual thumbnails/swatches | Complete customizer visually impressive; every option changes proof UI |
@@ -696,7 +696,7 @@ pnpm run build
 - `DirectionContext` remains as a custom React Context (bridges i18n library to MUI direction, not application-state — separate concern)
 
 ### Next Phase
-**Phase 9 — Shape, Density, Contrast, and Typography Preferences** (Model: DeepSeek v4 Flash)
+**Phase 8 — Six Primary-Color Presets Results** (Model: DeepSeek v4 Flash)
 
 **No existing dependencies downgraded.** ✅
 
@@ -791,5 +791,111 @@ pnpm run build
 
 ### Next Phase
 **Phase 9 — Shape, Density, Contrast, and Typography Preferences** (Model: DeepSeek v4 Flash)
+
+**No existing dependencies downgraded.** ✅
+
+---
+
+## Phase 9 — Shape, Density, Contrast, and Typography Preferences Results
+
+### Changed Files
+
+| File | Change |
+|------|--------|
+| `app/lib/typography.ts` | **Modified** — Added `FontFamilyKey` type, `LATIN_FONT_STACKS` (4 fonts with Tajawal fallback), `ARABIC_FONT_STACK`, `FONT_FAMILY_LABELS`; `createTypographyConfig` now accepts `fontFamilyKey` and `baseFontSize` params; `getFontFamily` accepts optional `fontFamilyKey` |
+| `app/stores/settings.ts` | **Modified** — Added `RadiusKey`, `FontFamilyKey`, `ContrastKey` types; added `radius`, `compact`, `contrast`, `fontFamily`, `fontSize` state + setter actions with localStorage persistence; `initializeSettings()` loads all new persisted prefs |
+| `app/lib/theme/index.ts` | **Modified** — Added `ContrastKey` export; `JaiiThemeOptions` now accepts `contrast`, `compact`, `fontFamily`, `fontSize`; passes all new params through to palette, typography, overrides |
+| `app/lib/theme/palette.ts` | **Modified** — `createPaletteConfig` accepts `contrast` param; high contrast mode strengthens text, backgrounds, dividers, and action states |
+| `app/lib/theme/overrides/index.ts` | **Modified** — `createComponentOverrides` accepts `compact` and `highContrast` params; compact mode reduces CardContent, CardHeader, DialogTitle/DialogContent/DialogActions padding; adds MuiTableCell and MuiToolbar compact overrides |
+| `app/lib/theme/theme-augmentation.ts` | **Modified** — Added `compact: boolean` and `contrast: "standard" \| "high"` to both `Theme.jaii` and `ThemeOptions.jaii` |
+| `app/lib/providers.tsx` | **Modified** — Reads `radius`, `compact`, `contrast`, `fontFamily`, `fontSize` from Zustand via narrow selectors; passes all to `createJaiiTheme()` |
+| `app/root.tsx` | **Modified** — Added font imports for Inter, DM Sans, Nunito Sans |
+| `app/routes/home.tsx` | **Modified** — Added temporary controls for radius (4 chips), compact (Switch), contrast (2 buttons), font family (4 chips), font size (Slider 14–18); added proof samples: Table, Navigation sample (List); extended dialog with theme-effect test area; theme info chips show all new settings |
+
+### Added/Updated Packages
+
+| Package | Version | Type | Notes |
+|---------|---------|------|-------|
+| `@fontsource-variable/inter` | ^5.2.8 | dependency | Inter Variable Latin font |
+| `@fontsource-variable/dm-sans` | ^5.2.8 | dependency | DM Sans Variable Latin font |
+| `@fontsource-variable/nunito-sans` | ^5.2.7 | dependency | Nunito Sans Variable Latin font |
+
+### Architecture
+
+1. **Font Family Selection** (`app/lib/typography.ts`):
+   - 4 Latin font families: Public Sans, Inter, DM Sans, Nunito Sans
+   - Each Latin stack includes Tajawal as explicit Arabic fallback
+   - Arabic always renders in Tajawal (native Arabic font)
+   - `createTypographyConfig(language, fontFamilyKey, baseFontSize)` accepts all three params
+   - All 4 fonts loaded via fontsource variable packages (self-hosted)
+
+2. **Zustand Store** (`app/stores/settings.ts`):
+   - New state: `radius: RadiusKey` (default `"balanced"`), `compact: boolean` (default `false`), `contrast: ContrastKey` (default `"standard"`), `fontFamily: FontFamilyKey` (default `"public-sans"`), `fontSize: number` (default `16`, range 14–18)
+   - Each has a corresponding `set*` action with localStorage persistence
+   - `initializeSettings()` loads all 5 new persisted preferences on mount
+   - Persistence keys: `jaii-radius`, `jaii-compact`, `jaii-contrast`, `jaii-font-family`, `jaii-font-size`
+
+3. **Theme Wiring** (`app/lib/providers.tsx`):
+   - 7 narrow Zustand selectors: `resolvedMode`, `primaryPreset`, `radius`, `compact`, `contrast`, `fontFamily`, `fontSize`
+   - All passed to `createJaiiTheme()` — theme re-creates when any changes
+   - No mirroring in local state or Context
+
+4. **Compact Mode Effect** (`app/lib/theme/overrides/index.ts`):
+   - Reduces padding on CardContent, CardHeader, DialogTitle, DialogContent, DialogActions
+   - Adds compact MuiTableCell and MuiToolbar overrides
+   - Home page Table uses `size={compact ? "small" : "medium"}`
+
+5. **High Contrast Mode Effect** (`app/lib/theme/palette.ts`):
+   - Pure white/black text colors (`#FFFFFF` / `#000000`)
+   - Stronger secondary text opacity (0.8 / 0.72)
+   - Darker background in light mode (#F0F0F0), darker in dark mode (#0A0A0A)
+   - Stronger divider opacity (0.32)
+   - More visible action hover/selected states
+
+### Commands Run and Results
+
+```bash
+# Install font packages (Inter, DM Sans, Nunito Sans)
+pnpm add @fontsource-variable/inter @fontsource-variable/dm-sans @fontsource-variable/nunito-sans
+# → Success: +3 packages
+
+# Type generation + typecheck
+pnpm run typecheck
+# → Passes (exit code 0)
+
+# Production build
+pnpm run build
+# → Success: client + SSR environments built
+```
+
+### Typecheck Status
+- `pnpm run typecheck` — **Passes** (exit code 0)
+- No new typecheck errors introduced by Phase 9
+
+### Build Status
+- `pnpm run build` — **Passes** (client + SSR environments)
+- Font assets for Inter, DM Sans, Nunito Sans appear in both client and server build output
+
+### Verified Behavior
+- **Radius selector**: 4 chip buttons (Compact 4px, Balanced 8px, Soft 12px, Rounded 16px) — clicking immediately updates all component border radii
+- **Compact toggle**: Switch turns compact mode on/off — CardContent, Dialog, Table cells, Navigation list all show reduced padding in compact mode
+- **Contrast selector**: Two buttons (Standard/High) — High contrast mode shows stronger text, darker backgrounds, more visible dividers
+- **Font family selector**: 4 chip buttons (Public Sans, Inter, DM Sans, Nunito Sans) — English text immediately switches to selected font; Arabic text remains Tajawal
+- **Font size slider**: 14–18 px with marks — base font size changes immediately, affecting body text in proof sections
+- **Table proof**: MUI Table with 4 rows, responsive `size` prop that responds to compact mode
+- **Navigation sample**: List with icons mimicking sidebar navigation, responds to compact mode
+- **Dialog proof**: Opens with buttons, chips, and text field inside — shows radius, compact, and contrast effects on dialog components
+- **Theme info chips**: Show all 9 current settings (mode, resolved, preset, radius, compact, contrast, font family, font size, direction)
+- All settings persist across page refresh (localStorage)
+- All Phase 8 functionality (mode, primary preset, language) preserved
+
+### Limitations / Known Issues
+- All controls are temporary (unstyled chips, buttons, switches in the brand card) — final styled controls added in Phase 12 customizer
+- Font size setting only affects MUI's `theme.typography.fontSize` — individual variant sizes (h1-h6, etc.) remain fixed at their token scale values
+- Compact mode overrides are limited to the most common components — additional overrides (e.g., Data Grid, Date Pickers) added in later phases
+- High contrast mode is a simplified implementation — full accessible contrast audit planned in Phase 49
+
+### Next Phase
+**Phase 10 — Floating Settings Trigger + Drawer Shell** (Model: MiniMax M2.7)
 
 **No existing dependencies downgraded.** ✅

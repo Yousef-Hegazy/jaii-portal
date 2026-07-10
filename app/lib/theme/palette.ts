@@ -296,13 +296,36 @@ import type { PaletteOptions } from "@mui/material/styles";
 /**
  * Creates a complete palette configuration for MUI theme.
  * Uses Cyan as the default primary color.
+ *
+ * @param mode - Light or dark mode
+ * @param primaryPreset - Primary color preset key
+ * @param contrast - Contrast preset ("standard" or "high")
  */
 export function createPaletteConfig(
   mode: "light" | "dark" = "light",
-  primaryPreset: PrimaryPresetKey = "cyan"
+  primaryPreset: PrimaryPresetKey = "cyan",
+  contrast: "standard" | "high" = "standard"
 ): PaletteOptions {
   const primary = PRIMARY_PRESETS[primaryPreset];
   const isDark = mode === "dark";
+  const isHighContrast = contrast === "high";
+
+  // High contrast adjustments
+  const textPrimary = isHighContrast
+    ? (isDark ? "#FFFFFF" : "#000000")
+    : (isDark ? TEXT.primary.dark : TEXT.primary.light);
+
+  const textSecondary = isHighContrast
+    ? (isDark ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.72)")
+    : (isDark ? TEXT.secondary.dark : TEXT.secondary.light);
+
+  const bgDefault = isHighContrast
+    ? (isDark ? "#0A0A0A" : "#F0F0F0")
+    : (isDark ? BACKGROUND.default.dark : BACKGROUND.default.light);
+
+  const divider = isHighContrast
+    ? (isDark ? "rgba(255, 255, 255, 0.32)" : "rgba(0, 0, 0, 0.32)")
+    : (isDark ? DIVIDER.dark : DIVIDER.light);
 
   return {
     mode,
@@ -359,19 +382,23 @@ export function createPaletteConfig(
       A700: NEUTRAL[700],
     },
     background: {
-      default: isDark ? BACKGROUND.default.dark : BACKGROUND.default.light,
+      default: bgDefault,
       paper: isDark ? BACKGROUND.paper.dark : BACKGROUND.paper.light,
     },
     text: {
-      primary: isDark ? TEXT.primary.dark : TEXT.primary.light,
-      secondary: isDark ? TEXT.secondary.dark : TEXT.secondary.light,
+      primary: textPrimary,
+      secondary: textSecondary,
       disabled: isDark ? TEXT.disabled.dark : TEXT.disabled.light,
     },
-    divider: isDark ? DIVIDER.dark : DIVIDER.light,
+    divider,
     action: {
       active: isDark ? ACTION.active.dark : ACTION.active.light,
-      hover: isDark ? ACTION.hover.dark : ACTION.hover.light,
-      selected: isDark ? ACTION.selected.dark : ACTION.selected.light,
+      hover: isHighContrast
+        ? (isDark ? "rgba(255, 255, 255, 0.10)" : "rgba(0, 0, 0, 0.08)")
+        : (isDark ? ACTION.hover.dark : ACTION.hover.light),
+      selected: isHighContrast
+        ? (isDark ? "rgba(255, 255, 255, 0.16)" : "rgba(0, 0, 0, 0.12)")
+        : (isDark ? ACTION.selected.dark : ACTION.selected.light),
       disabled: isDark ? ACTION.disabled.dark : ACTION.disabled.light,
       disabledBackground: isDark
         ? ACTION.disabledBackground.dark

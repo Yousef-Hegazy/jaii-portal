@@ -33,18 +33,28 @@ function ThemedProviders({ children }: { children: ReactNode }) {
   // Narrow Zustand selectors — only re-renders when relevant state changes
   const resolvedMode = useSettingsStore((state) => state.resolvedMode);
   const primaryPreset = useSettingsStore((state) => state.primaryPreset);
+  const radius = useSettingsStore((state) => state.radius);
+  const compact = useSettingsStore((state) => state.compact);
+  const contrast = useSettingsStore((state) => state.contrast);
+  const fontFamily = useSettingsStore((state) => state.fontFamily);
+  const fontSize = useSettingsStore((state) => state.fontSize);
 
-  // Create theme with dynamic mode, primary preset, direction and language-aware typography
+  // Create theme with dynamic mode, primary preset, radius, compact, contrast,
+  // font family, font size, direction and language-aware typography
   const theme = useMemo(
     () =>
       createJaiiTheme({
         mode: resolvedMode,
         primaryPreset,
-        radius: "balanced",
+        radius,
+        compact,
+        contrast,
+        fontFamily,
+        fontSize,
         language,
         direction,
       }),
-    [resolvedMode, primaryPreset, direction, language],
+    [resolvedMode, primaryPreset, radius, compact, contrast, fontFamily, fontSize, direction, language],
   );
 
   return (

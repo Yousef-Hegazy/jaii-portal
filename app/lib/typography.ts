@@ -3,35 +3,58 @@
  *
  * Font stacks:
  * - Arabic (Tajawal): Self-hosted via @fontsource/tajawal
- * - English (Public Sans Variable): Self-hosted via @fontsource-variable/public-sans
+ * - English (Public Sans, Inter, DM Sans, Nunito Sans): Self-hosted via fontsource variables
  *
+ * Each Latin font includes Tajawal as an explicit Arabic fallback.
  * These tokens feed into MUI's createTheme typography configuration.
  */
+
+// ============================================================================
+// Font Family Types
+// ============================================================================
+
+export type FontFamilyKey = "public-sans" | "inter" | "dm-sans" | "nunito-sans";
 
 // ============================================================================
 // Font Stacks
 // ============================================================================
 
-export const FONT_STACKS = {
-  /**
-   * Public Sans Variable for English — loaded via @fontsource-variable/public-sans.
-   * CSS font-family name: "Public Sans Variable"
-   */
-  english: ['"Public Sans Variable"', "Public Sans", "sans-serif"].join(", "),
-
-  /**
-   * Tajawal for Arabic — loaded via @fontsource/tajawal.
-   * CSS font-family name: "Tajawal"
-   */
-  arabic: ["Tajawal", "sans-serif"].join(", "),
-} as const;
+/**
+ * Latin font stacks with Tajawal Arabic fallback.
+ * Loaded via @fontsource-variable/* packages.
+ */
+export const LATIN_FONT_STACKS: Record<FontFamilyKey, string> = {
+  "public-sans": ['"Public Sans Variable"', "Public Sans", "Tajawal", "sans-serif"].join(", "),
+  inter: ['"Inter Variable"', "Inter", "Tajawal", "sans-serif"].join(", "),
+  "dm-sans": ['"DM Sans Variable"', "DM Sans", "Tajawal", "sans-serif"].join(", "),
+  "nunito-sans": ['"Nunito Sans Variable"', "Nunito Sans", "Tajawal", "sans-serif"].join(", "),
+};
 
 /**
- * Returns the appropriate font stack for the given language.
+ * Arabic font stack — always Tajawal for native Arabic rendering.
  */
-export function getFontFamily(language: string): string {
-  return language === "ar" ? FONT_STACKS.arabic : FONT_STACKS.english;
+export const ARABIC_FONT_STACK = ["Tajawal", "sans-serif"].join(", ");
+
+/**
+ * Returns the appropriate font stack based on language and font family key.
+ * - Arabic (`ar`): Always uses Tajawal.
+ * - English (`en`): Uses the selected font family with Tajawal fallback.
+ */
+export function getFontFamily(language: string, fontFamilyKey: FontFamilyKey = "public-sans"): string {
+  if (language === "ar") return ARABIC_FONT_STACK;
+  return LATIN_FONT_STACKS[fontFamilyKey];
 }
+
+// ============================================================================
+// Font Family Display Labels
+// ============================================================================
+
+export const FONT_FAMILY_LABELS: Record<FontFamilyKey, { en: string; ar: string }> = {
+  "public-sans": { en: "Public Sans", ar: "Public Sans" },
+  inter: { en: "Inter", ar: "Inter" },
+  "dm-sans": { en: "DM Sans", ar: "DM Sans" },
+  "nunito-sans": { en: "Nunito Sans", ar: "Nunito Sans" },
+};
 
 // ============================================================================
 // Typography Token Scale (px)
@@ -60,16 +83,23 @@ export type TypographyVariant = keyof typeof TYPOGRAPHY_SCALE;
 // ============================================================================
 
 /**
- * Builds a complete MUI TypographyOptions object for the given language.
+ * Builds a complete MUI TypographyOptions object for the given language,
+ * font family, and base font size.
  *
- * Usage: pass the result as `typography` in `createTheme({ typography })`.
+ * @param language - Active language code ("ar" or "en")
+ * @param fontFamilyKey - Selected Latin font family key (ignored for Arabic)
+ * @param baseFontSize - Base font size in px (14-18, default 16)
  */
-export function createTypographyConfig(language: string) {
-  const fontFamily = getFontFamily(language);
+export function createTypographyConfig(
+  language: string,
+  fontFamilyKey: FontFamilyKey = "public-sans",
+  baseFontSize: number = 16,
+) {
+  const fontFamily = getFontFamily(language, fontFamilyKey);
 
   return {
     fontFamily,
-    fontSize: 16,
+    fontSize: baseFontSize,
 
     h1: {
       fontFamily,

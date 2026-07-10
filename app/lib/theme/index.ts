@@ -17,11 +17,13 @@ import { createShapeConfig, type RadiusKey } from "./shape";
 import { createTransitionsConfig } from "./transitions";
 import { createZIndexConfig } from "./z-index";
 import { createSpacingConfig } from "./spacing";
-import { createTypographyConfig } from "../typography";
+import { createTypographyConfig, type FontFamilyKey } from "../typography";
 import { createComponentOverrides } from "./overrides";
 
 // Import augmentation to ensure types are available
 import "./theme-augmentation";
+
+export type ContrastKey = "standard" | "high";
 
 export interface JaiiThemeOptions {
   /** Light or dark mode */
@@ -34,6 +36,14 @@ export interface JaiiThemeOptions {
   language?: string;
   /** Direction for RTL/LTR */
   direction?: "rtl" | "ltr";
+  /** Contrast preset (default: "standard") */
+  contrast?: ContrastKey;
+  /** Compact density mode (default: false) */
+  compact?: boolean;
+  /** Active font family key (default: "public-sans") */
+  fontFamily?: FontFamilyKey;
+  /** Base font size in px (14–18, default: 16) */
+  fontSize?: number;
 }
 
 /**
@@ -49,27 +59,40 @@ export function createJaiiTheme(options: JaiiThemeOptions = {}): Theme {
     radius = "balanced",
     language = "ar",
     direction = "rtl",
+    contrast = "standard",
+    compact = false,
+    fontFamily = "public-sans",
+    fontSize = 16,
   } = options;
 
   const isDark = mode === "dark";
+  const isHighContrast = contrast === "high";
 
   // Compute extended primary palette and dynamic chart series
   const extendedPrimary = createExtendedPrimary(primaryPreset);
   const chartSeries = createChartSeries(primaryPreset);
 
   // Create base theme first to have access to palette values
-  const paletteConfig = createPaletteConfig(mode, primaryPreset);
+  const paletteConfig = createPaletteConfig(mode, primaryPreset, contrast);
   const shapeConfig = createShapeConfig(radius);
   const shadows = createShadows(mode);
   const transitionsConfig = createTransitionsConfig();
   const zIndexConfig = createZIndexConfig();
   const spacing = createSpacingConfig();
-  const typographyConfig = createTypographyConfig(language);
+  const typographyConfig = createTypographyConfig(language, fontFamily, fontSize);
+
+  // Adjust divider opacity for high contrast
+  const dividerColor = isHighContrast
+    ? isDark ? "rgba(255, 255, 255, 0.32)" : "rgba(0, 0, 0, 0.32)"
+    : undefined;
 
   // Create theme with all configurations
   const theme = createTheme({
     direction,
-    palette: paletteConfig,
+    palette: {
+      ...paletteConfig,
+      ...(dividerColor ? { divider: dividerColor } : {}),
+    },
     typography: typographyConfig,
     shape: {
       borderRadius: shapeConfig.borderRadius,
@@ -78,7 +101,7 @@ export function createJaiiTheme(options: JaiiThemeOptions = {}): Theme {
     spacing,
     transitions: transitionsConfig,
     zIndex: zIndexConfig,
-    components: createComponentOverrides(),
+    components: createComponentOverrides(compact, isHighContrast),
     // Custom Jaii extensions
     jaii: {
       primaryPreset,
@@ -104,6 +127,8 @@ export function createJaiiTheme(options: JaiiThemeOptions = {}): Theme {
         buttonPrimaryHover: isDark ? DARK_SHADOWS.buttonPrimaryHover : SHADOWS.buttonPrimaryHover,
         inputFocus: isDark ? DARK_SHADOWS.inputFocus : SHADOWS.inputFocus,
       },
+      compact,
+      contrast,
     },
   });
 

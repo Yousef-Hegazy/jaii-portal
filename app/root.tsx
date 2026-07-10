@@ -16,6 +16,9 @@ import "./lib/i18n";
 
 // Self-hosted fonts via fontsource
 import "@fontsource-variable/public-sans/wght.css";
+import "@fontsource-variable/inter/wght.css";
+import "@fontsource-variable/dm-sans/wght.css";
+import "@fontsource-variable/nunito-sans/wght.css";
 import "@fontsource/tajawal";
 
 /**

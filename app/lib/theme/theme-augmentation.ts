@@ -59,7 +59,7 @@ declare module "@mui/material/styles" {
           input: number;
         };
       };
-      /** Custom shadows for premium feel */
+      /** Custom shadow overrides */
       shadows: {
         card: string;
         cardHover: string;
@@ -70,6 +70,10 @@ declare module "@mui/material/styles" {
         buttonPrimaryHover: string;
         inputFocus: string;
       };
+      /** Compact density mode */
+      compact: boolean;
+      /** Contrast preset */
+      contrast: "standard" | "high";
     };
   }
 
@@ -96,6 +100,10 @@ declare module "@mui/material/styles" {
       shape?: Theme["jaii"]["shape"];
       /** Custom shadow overrides */
       shadows?: Partial<Theme["jaii"]["shadows"]>;
+      /** Compact density mode */
+      compact?: boolean;
+      /** Contrast preset */
+      contrast?: "standard" | "high";
     };
   }
 }
