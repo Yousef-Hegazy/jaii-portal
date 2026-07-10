@@ -2,68 +2,125 @@
  * Jaii Portal Theme Palette
  *
  * Semantic palette extensions with:
- * - Primary color presets (Cyan default)
+ * - Primary color presets (Cyan default) with derived hover/selected/focus/translucent states
  * - Neutral grey scale
  * - Semantic status colors
- * - Chart series colors
+ * - Chart series colors generated from presets
  */
+
+// ============================================================================
+// Hex-to-RGBA helper
+// ============================================================================
+
+function hexToRgba(hex: string, alpha: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 
 // ============================================================================
 // Primary Color Presets
 // ============================================================================
 
+/**
+ * Each preset stores the core hex values.
+ * Derived states (hover, selected, focus, translucent) are computed from `main`.
+ */
 export const PRIMARY_PRESETS = {
   emerald: {
+    lighter: "#C8FAD6",
+    light: "#5BE49B",
     main: "#00A76F",
-    light: "#00C896",
-    lighter: "#E8F5E9",
-    dark: "#007B54",
-    darker: "#005C3F",
+    dark: "#007B55",
+    darker: "#004B34",
     contrastText: "#FFFFFF",
   },
   cyan: {
+    lighter: "#CAFDF5",
+    light: "#61F3F3",
     main: "#078DEE",
-    light: "#54A4F2",
-    lighter: "#E3F2FD",
     dark: "#066BB8",
     darker: "#054D87",
     contrastText: "#FFFFFF",
   },
   purple: {
+    lighter: "#EFE1FF",
+    light: "#B985FF",
     main: "#7635DC",
-    light: "#9C5FE8",
-    lighter: "#F3E5F5",
     dark: "#5A29A8",
     darker: "#411F7A",
     contrastText: "#FFFFFF",
   },
   blue: {
+    lighter: "#D1E9FF",
+    light: "#76B0F1",
     main: "#0C68E9",
-    light: "#4A8EF0",
-    lighter: "#E3F2FD",
     dark: "#094EB3",
     darker: "#073982",
     contrastText: "#FFFFFF",
   },
   orange: {
+    lighter: "#FFF3CC",
+    light: "#FDD48F",
     main: "#FDA92D",
-    light: "#FDC25E",
-    lighter: "#FFF8E1",
     dark: "#E08A00",
     darker: "#A86600",
     contrastText: "rgba(0, 0, 0, 0.87)",
   },
   red: {
+    lighter: "#FFE0D6",
+    light: "#FF8682",
     main: "#FF3030",
-    light: "#FF6B6B",
-    lighter: "#FFEBEE",
-    dark: "#D32F2F",
-    darker: "#B71C1C",
+    dark: "#B72136",
+    darker: "#7A151E",
     contrastText: "#FFFFFF",
   },
 } as const;
 
 export type PrimaryPresetKey = keyof typeof PRIMARY_PRESETS;
+
+// ============================================================================
+// Extended primary palette (computed)
+// ============================================================================
+
+export interface ExtendedPrimaryPalette {
+  lighter: string;
+  light: string;
+  main: string;
+  dark: string;
+  darker: string;
+  contrastText: string;
+  /** 8% opacity on main — used for hover backgrounds */
+  hover: string;
+  /** 12% opacity on main — used for selected backgrounds */
+  selected: string;
+  /** 20% opacity on main — used for focus rings */
+  focus: string;
+  /** 8% opacity on main — used for translucent overlays */
+  translucent: string;
+}
+
+/**
+ * Builds the full extended primary palette for a given preset.
+ * Derived alpha states (hover, selected, focus, translucent) are computed
+ * from the `main` color so they match the active preset in both light and dark contexts.
+ */
+export function createExtendedPrimary(preset: PrimaryPresetKey): ExtendedPrimaryPalette {
+  const p = PRIMARY_PRESETS[preset];
+  return {
+    lighter: p.lighter,
+    light: p.light,
+    main: p.main,
+    dark: p.dark,
+    darker: p.darker,
+    contrastText: p.contrastText,
+    hover: hexToRgba(p.main, 0.08),
+    selected: hexToRgba(p.main, 0.12),
+    focus: hexToRgba(p.main, 0.20),
+    translucent: hexToRgba(p.main, 0.08),
+  };
+}
 
 // ============================================================================
 // Neutral Grey Scale
@@ -123,20 +180,25 @@ export const SEMANTIC = {
 } as const;
 
 // ============================================================================
-// Chart Series Colors
+// Chart Series Colors (derived from all presets)
 // ============================================================================
 
+/**
+ * Returns a chart series ordered by preset.
+ * The first entry is the currently active preset's main color.
+ */
+export function createChartSeries(preset: PrimaryPresetKey): string[] {
+  const presetOrder: PrimaryPresetKey[] = [
+    preset,
+    // Other presets in a fixed order (excluding the active one)
+    ...(["emerald", "cyan", "purple", "blue", "orange", "red"] as PrimaryPresetKey[]).filter(
+      (p) => p !== preset,
+    ),
+  ];
+  return presetOrder.map((p) => PRIMARY_PRESETS[p].main);
+}
+
 export const CHART_COLORS = {
-  series: [
-    "#078DEE", // Primary (Cyan)
-    "#00A76F", // Emerald
-    "#7635DC", // Purple
-    "#FDA92D", // Orange
-    "#FF3030", // Red
-    "#0C68E9", // Blue
-    "#22C55E", // Success
-    "#F59E0B", // Warning
-  ],
   background: {
     light: "#FFFFFF",
     dark: "#161C24",
@@ -318,4 +380,9 @@ export function createPaletteConfig(
   };
 }
 
-export { PRIMARY_PRESETS as primaryPresets, NEUTRAL as neutral, SEMANTIC as semantic, CHART_COLORS as chartColors };
+export {
+  PRIMARY_PRESETS as primaryPresets,
+  NEUTRAL as neutral,
+  SEMANTIC as semantic,
+  CHART_COLORS as chartColors,
+};

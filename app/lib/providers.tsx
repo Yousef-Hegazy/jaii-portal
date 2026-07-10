@@ -30,20 +30,21 @@ function SettingsInitializer({ children }: { children: ReactNode }) {
 function ThemedProviders({ children }: { children: ReactNode }) {
   const { direction, language } = useDirection();
 
-  // Narrow Zustand selector — only re-renders when resolvedMode changes
+  // Narrow Zustand selectors — only re-renders when relevant state changes
   const resolvedMode = useSettingsStore((state) => state.resolvedMode);
+  const primaryPreset = useSettingsStore((state) => state.primaryPreset);
 
-  // Create theme with dynamic mode, direction and language-aware typography
+  // Create theme with dynamic mode, primary preset, direction and language-aware typography
   const theme = useMemo(
     () =>
       createJaiiTheme({
         mode: resolvedMode,
-        primaryPreset: "cyan",
+        primaryPreset,
         radius: "balanced",
         language,
         direction,
       }),
-    [resolvedMode, direction, language],
+    [resolvedMode, primaryPreset, direction, language],
   );
 
   return (

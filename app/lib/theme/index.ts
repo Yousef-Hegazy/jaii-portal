@@ -11,7 +11,7 @@
  */
 
 import { createTheme, type Theme } from "@mui/material/styles";
-import { createPaletteConfig, PRIMARY_PRESETS, NEUTRAL, SEMANTIC, CHART_COLORS, type PrimaryPresetKey } from "./palette";
+import { createPaletteConfig, createExtendedPrimary, createChartSeries, PRIMARY_PRESETS, NEUTRAL, SEMANTIC, CHART_COLORS, type PrimaryPresetKey } from "./palette";
 import { createShadows, SHADOWS, DARK_SHADOWS } from "./shadows";
 import { createShapeConfig, type RadiusKey } from "./shape";
 import { createTransitionsConfig } from "./transitions";
@@ -53,6 +53,10 @@ export function createJaiiTheme(options: JaiiThemeOptions = {}): Theme {
 
   const isDark = mode === "dark";
 
+  // Compute extended primary palette and dynamic chart series
+  const extendedPrimary = createExtendedPrimary(primaryPreset);
+  const chartSeries = createChartSeries(primaryPreset);
+
   // Create base theme first to have access to palette values
   const paletteConfig = createPaletteConfig(mode, primaryPreset);
   const shapeConfig = createShapeConfig(radius);
@@ -80,8 +84,11 @@ export function createJaiiTheme(options: JaiiThemeOptions = {}): Theme {
       primaryPreset,
       neutral: NEUTRAL,
       semantic: SEMANTIC,
+      palette: {
+        primary: extendedPrimary,
+      },
       chart: {
-        series: [...CHART_COLORS.series],
+        series: chartSeries,
         background: { ...CHART_COLORS.background },
         grid: { ...CHART_COLORS.grid },
         text: { ...CHART_COLORS.text },
@@ -104,8 +111,8 @@ export function createJaiiTheme(options: JaiiThemeOptions = {}): Theme {
 }
 
 // Re-export types and utilities
-export type { PrimaryPresetKey } from "./palette";
-export { PRIMARY_PRESETS, NEUTRAL, SEMANTIC, CHART_COLORS } from "./palette";
+export type { PrimaryPresetKey, ExtendedPrimaryPalette } from "./palette";
+export { PRIMARY_PRESETS, NEUTRAL, SEMANTIC, CHART_COLORS, createExtendedPrimary, createChartSeries } from "./palette";
 export { SHADOWS, DARK_SHADOWS } from "./shadows";
 export { SHAPE } from "./shape";
 export { Z_INDEX } from "./z-index";

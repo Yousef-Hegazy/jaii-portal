@@ -23,9 +23,26 @@ import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { TYPOGRAPHY_SCALE, getFontFamily } from "../lib/typography";
 import { useTheme } from "@mui/material/styles";
-import { useSettingsStore, type Mode } from "../stores/settings";
+import { useSettingsStore, type Mode, type PrimaryPresetKey } from "../stores/settings";
 
 import type { Route } from "./+types/home";
+
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
+const PRESETS: { key: PrimaryPresetKey; hex: string; labelEn: string; labelAr: string }[] = [
+  { key: "emerald", hex: "#00A76F", labelEn: "Emerald", labelAr: "زمردي" },
+  { key: "cyan", hex: "#078DEE", labelEn: "Cyan", labelAr: "سماوي" },
+  { key: "purple", hex: "#7635DC", labelEn: "Purple", labelAr: "أرجواني" },
+  { key: "blue", hex: "#0C68E9", labelEn: "Blue", labelAr: "أزرق" },
+  { key: "orange", hex: "#FDA92D", labelEn: "Orange", labelAr: "برتقالي" },
+  { key: "red", hex: "#FF3030", labelEn: "Red", labelAr: "أحمر" },
+];
+
+// ---------------------------------------------------------------------------
+// Meta
+// ---------------------------------------------------------------------------
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -34,12 +51,18 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
 export default function Home() {
   const { t } = useTranslation("landing");
   const theme = useTheme();
   const mode = useSettingsStore((s) => s.mode);
   const resolvedMode = useSettingsStore((s) => s.resolvedMode);
+  const primaryPreset = useSettingsStore((s) => s.primaryPreset);
   const setMode = useSettingsStore((s) => s.setMode);
+  const setPrimaryPreset = useSettingsStore((s) => s.setPrimaryPreset);
   const currentLang = i18n.language;
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -150,6 +173,73 @@ export default function Home() {
               </Button>
             ))}
           </Box>
+
+          {/* Temporary primary preset selector — not final styled control */}
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+              justifyContent: "center",
+              mt: 1.5,
+              flexWrap: "wrap",
+            }}
+          >
+            {PRESETS.map((preset) => (
+              <Tooltip
+                key={preset.key}
+                title={
+                  currentLang === "ar"
+                    ? `${preset.labelAr} (${preset.hex})`
+                    : `${preset.labelEn} (${preset.hex})`
+                }
+              >
+                <Box
+                  component="button"
+                  onClick={() => setPrimaryPreset(preset.key)}
+                  onKeyDown={(e: React.KeyboardEvent) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setPrimaryPreset(preset.key);
+                    }
+                  }}
+                  aria-label={`${preset.labelEn} preset`}
+                  tabIndex={0}
+                  sx={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: "50%",
+                    border: 2,
+                    borderColor:
+                      primaryPreset === preset.key ? "primary.main" : "transparent",
+                    backgroundColor: preset.hex,
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    outline: "none",
+                    transition: "border-color 0.2s",
+                    "&:hover": {
+                      borderColor: "text.secondary",
+                    },
+                    "&:focus-visible": {
+                      boxShadow: `0 0 0 3px ${theme.palette.primary.main}40`,
+                    },
+                  }}
+                >
+                  {primaryPreset === preset.key && (
+                    <Icon
+                      icon="mdi:check"
+                      width={14}
+                      height={14}
+                      color={
+                        preset.key === "orange" ? "rgba(0,0,0,0.6)" : "#FFFFFF"
+                      }
+                    />
+                  )}
+                </Box>
+              </Tooltip>
+            ))}
+          </Box>
         </CardContent>
       </Card>
 
@@ -157,7 +247,7 @@ export default function Home() {
       <Card sx={{ maxWidth: 800, width: "100%" }}>
         <CardContent sx={{ py: 4, px: 4 }}>
           <Typography variant="overline" color="text.secondary" sx={{ mb: 2, display: "block" }}>
-            {currentLang === "ar" ? "مكونات السمة" : "Theme Components"} — Cyan Primary
+            {currentLang === "ar" ? "مكونات السمة" : "Theme Components"}
           </Typography>
 
           <Stack spacing={4}>
@@ -374,7 +464,16 @@ export default function Home() {
                 />
                 <Chip
                   size="small"
-                  label={`primary: ${theme.palette.primary.main}`}
+                  label={`preset: ${primaryPreset}`}
+                  variant="outlined"
+                  sx={{
+                    borderColor: theme.palette.primary.main,
+                    color: theme.palette.primary.main,
+                  }}
+                />
+                <Chip
+                  size="small"
+                  label={theme.palette.primary.main}
                   variant="outlined"
                 />
                 <Chip
@@ -521,10 +620,11 @@ export default function Home() {
           </Grid>
 
           <Box sx={{ display: "flex", gap: 2, alignItems: "center", flexWrap: "wrap", mt: 3 }}>
-            <Icon icon="mdi:check-circle" width={24} height={24} color="#00A76F" />
-            <Icon icon="mdi:alert-circle" width={24} height={24} color="#FF3030" />
-            <Icon icon="mdi:star" width={24} height={24} color="#FDA92D" />
-            <Icon icon="mdi:information" width={24} height={24} color="#078DEE" />
+            {/* Colored icons use theme palette — no hardcoded hex values */}
+            <Icon icon="mdi:check-circle" width={24} height={24} color={theme.palette.success.main} />
+            <Icon icon="mdi:alert-circle" width={24} height={24} color={theme.palette.error.main} />
+            <Icon icon="mdi:star" width={24} height={24} color={theme.palette.warning.main} />
+            <Icon icon="mdi:information" width={24} height={24} color={theme.palette.info.main} />
             <Chip
               icon={<Icon icon="mdi:refresh" width={16} height={16} />}
               label={currentLang === "ar" ? "تحديث" : "Refresh"}

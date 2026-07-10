@@ -7,11 +7,17 @@
 **Phase 3 — Correct MUI RTL/LTR Engine** ✅ Complete
 **Phase 4 — Font and Icon Foundation** ✅ Complete
 **Phase 5 — Base MUI Theme Anatomy** ✅ Complete
-**Phase 6 — Light/Dark/Theme Generation** ✅ Complete
+**Phase 6 — Zustand Global UI-State Foundation** ✅ Complete
+**Phase 7 — Light, Dark, and System Mode** ✅ Complete
+**Phase 8 — Six Primary-Color Presets** ✅ Complete
+**Next:** Phase 9 — Shape, Density, Contrast, and Typography Preferences
 
 ---
 
 ## Phase Checklist
+
+> **Numbering synchronized with `Jaii_MUI_Micro_Phase_Prompts_Zustand.md`.**  
+> The original Phase 6 mode work and its corrective Zustand refactor jointly completed revised Phases 6 and 7. The next implementation phase is **Phase 8 — Six primary-color presets**.
 
 | Phase | Name | Status | Model | Key Deliverables | Gate |
 |-------|------|--------|-------|------------------|------|
@@ -21,23 +27,23 @@
 | 3 | Correct MUI RTL/LTR engine | ✅ **Done** | GLM-5 | Document lang/dir, theme direction, Emotion RTL caches, stylis prefixer + MUI RTL plugin, portal components | TextField, Dialog, spacing, document direction mirror correctly without reload |
 | 4 | Font and icon foundation | ✅ **Done** | DeepSeek v4 Flash | Public Sans (EN), Tajawal (AR), @iconify/react, typography tokens, language-switched fonts | Arabic uses Tajawal, English uses Public Sans, icons render without extra library |
 | 5 | Base MUI theme anatomy | ✅ **Done** | GLM-5 | Semantic palette, neutral scale, typography, spacing, shape, shadows, transitions, z-index, TS augmentation, component overrides structure | Proof components look coherent/premium in default light theme (Cyan primary) |
-| 6 | Light/dark/theme generation | ✅ **Done** | DeepSeek v4 Flash | Complete light/dark/system modes, OS preference following, no reload, temp mode selector | All proof components affected in light/dark/system including open Dialog/menu |
-| 7 | Six primary-color presets | ⬜ Pending | DeepSeek v4 Flash | Emerald, Cyan, Purple, Blue, Orange, Red with full tonal palettes, temp preset selector | Every preset attractive/readable in light+dark; Cyan default; no hardcoded primary |
-| 8 | Shape, density, contrast, typography preferences | ⬜ Pending | DeepSeek v4 Flash | Radius (4), compact (on/off), contrast (2), font family (4 + Arabic), font size (14-18), temp controls | Each setting causes obvious global change on real MUI components |
-| 9 | Preference store + first-paint bootstrap | ⬜ Pending | GLM-5 | Zustand store with versioned model, safe parsing/migration/reset, pre-hydration bootstrap, no flash | Refresh preserves controls; no light/direction flash |
-| 10 | Floating settings trigger + drawer shell | ⬜ Pending | MiniMax M2.7 | Translated FAB, logical RTL/LTR edge, responsive drawer, title/reset/close, scrollable sections, premium styling | Trigger + drawer look like premium template in AR/EN |
+| 6 | Zustand global UI-state foundation | ✅ **Done** | DeepSeek v4 Flash (corrective refactor) | Zustand installed; mode state/actions migrated from custom Context; narrow selectors; persistence and initialization; MUI theme derives from Zustand | Global mode preference is Zustand-owned; refresh preserves it; no custom mode/settings Context remains |
+| 7 | Light, dark, and system mode | ✅ **Done** | DeepSeek v4 Flash | Complete light/dark/system modes driven by Zustand; OS preference listener; temporary mode selector; theme-aware component overrides | All proof components respond; mode persists; system follows OS; no competing Context source |
+| 8 | Six primary-color presets | ✅ **Done** | DeepSeek v4 Flash | Emerald, Cyan, Purple, Blue, Orange, and Red tonal palettes with computed hover/selected/focus/translucent states; selected preset stored in Zustand; temporary selector; dynamic chart series | Every preset is attractive in light/dark, persists after refresh, and has one Zustand source of truth |
+| 9 | Shape, density, contrast, and typography preferences | ⬜ Pending | DeepSeek v4 Flash | Radius (4), compact mode, contrast (2), font family (4 with Tajawal Arabic fallback), font size 14–18; all connected to Zustand | Every setting visibly affects real MUI components, persists, and has no duplicate state source |
+| 10 | Floating settings trigger + drawer shell | ⬜ Pending | MiniMax M2.7 | Translated FAB, logical RTL/LTR edge, responsive drawer, Zustand-owned open state/reset action, title/reset/close, scrollable sections, premium styling | Trigger + drawer look like a premium template in AR/EN without a custom settings Context |
 | 11 | Customizer core controls | ⬜ Pending | DeepSeek v4 Flash | Mode, contrast, direction (auto/ltr/rtl), compact connected to polished controls in drawer | All 4 controls work immediately, persist, usable in RTL |
 | 12 | Customizer visual controls | ⬜ Pending | MiniMax M2.7 | Nav layout (3), nav color (2), 6 color presets, 4 radii, 4 font families, font size slider, visual thumbnails/swatches | Complete customizer visually impressive; every option changes proof UI |
 | 13 | Appearance settings route | ⬜ Pending | DeepSeek v4 Flash | `/dashboard/settings/appearance` reusing drawer controls + larger live preview | Direct URL works; drawer/page synchronized |
 | 14 | Route map + placeholder hierarchy | ⬜ Pending | DeepSeek v4 Flash | 17 explicit routes registered with Outlet, minimal MUI placeholders | Every URL opens directly; no route mismatch |
 | 15 | Dashboard frame | ⬜ Pending | MiniMax M2.7 | Nav/header/content regions, responsive gutters, surface hierarchy, skip link, route outlet | Placeholder pages feel like commercial dashboard |
 | 16 | Expanded vertical navigation | ⬜ Pending | MiniMax M2.7 | Logo placeholder, translated grouped links, icons, active states, nested groups, user/footer, integrated/apparent color modes, RTL/LTR correct side, independent scroll | All links work; Arabic labels fit; both nav color modes premium |
-| 17 | Mini navigation mode | ⬜ Pending | MiniMax M2.7 | Stable icon rail, accessible tooltips, active marker, nested flyout, persisted, reduced-motion-safe transition, Ctrl/Cmd+B | Vertical ↔ mini polished, persistent, works RTL/LTR |
+| 17 | Mini navigation mode | ⬜ Pending | MiniMax M2.7 | Stable icon rail, accessible tooltips, active marker, nested flyout, Zustand-owned sidebar preference, reduced-motion-safe transition, Ctrl/Cmd+B | Vertical ↔ mini polished, persistent, works RTL/LTR |
 | 18 | Horizontal navigation mode | ⬜ Pending | MiniMax M2.7 | Horizontal nav below header, same config/permissions, grouped menus, active state, overflow-safe, integrated/apparent, RTL ordering | All 3 nav options work via customizer without route loss |
 | 19 | Mobile dashboard navigation | ⬜ Pending | MiniMax M2.7 | Mobile header + temp Drawer, correct RTL/LTR edge, focus/close behavior, translated groups, active state, closes after nav, compact brand/user, no horizontal overflow | Small-phone nav usable/finished in both languages |
 | 20 | Header essentials | ⬜ Pending | MiniMax M2.7 | Sidebar/mobile trigger, page title/breadcrumbs, language switcher, compact selector, appearance trigger, notification button, user avatar/menu, demo logout | Header balanced in vertical/mini/horizontal/mobile/RTL/LTR |
-| 21 | Command palette | ⬜ Pending | DeepSeek v4 Flash | MUI Dialog Ctrl/Cmd+K, route nav, translated labels/keywords, grouped results, recent routes, keyboard nav, disabled placeholders for orders/customers | Keyboard opens, searches, navigates, closes, restores focus |
-| 22 | Notifications experience | ⬜ Pending | MiniMax M2.7 | Popover with unread badge, categories (order/customer/driver/system), read/unread styling, timestamps, mark all read, empty state, route links, mobile-friendly, translated | Production-ready in light/dark/RTL/LTR |
+| 21 | Command palette | ⬜ Pending | DeepSeek v4 Flash | MUI Dialog Ctrl/Cmd+K, route nav, translated labels/keywords, grouped results, recent routes in a focused Zustand slice, keyboard nav, disabled entity placeholders | Keyboard opens, searches, navigates, closes, and restores focus |
+| 22 | Notifications experience | ⬜ Pending | MiniMax M2.7 | Popover with unread badge, categories, read/unread state in focused Zustand UI slice until server-backed, timestamps, mark all read, empty state, route links, responsive translated UI | Production-ready in light/dark/RTL/LTR |
 | 23 | Component showcase route | ⬜ Pending | MiniMax M2.7 | `/dashboard/showcase/components` — buttons, chips, avatars, alerts, cards, menus, dialogs, drawers, tooltips, tabs, accordions, empty/loading/error states, template-catalogue style | Every theme dimension visibly affects catalogue |
 | 24 | ApexCharts infrastructure | ⬜ Pending | GLM-5 | `apexcharts` + `react-apexcharts` installed, SSR-safe lazy wrapper, MUI→Apex theme options, direction-aware toolbar/tooltip/legend/labels, semantic color helpers, reusable chart card, no-data/loading states | Proof chart works after direct reload, dark mode, Arabic RTL, color-preset switch |
 | 25 | Core charts showcase | ⬜ Pending | MiniMax M2.7 | Area, line, column, horizontal bar with mock business labels, compact controls, legends, responsive sizing | 4 charts coherent/readable on tablet/phone |
@@ -46,7 +52,7 @@
 | 28 | Tables showcase | ⬜ Pending | DeepSeek v4 Flash | `@mui/x-data-grid` Community installed, basic table, sorting, filtering/search, pagination, selection, custom cells/status/avatar/actions, loading/no-results, responsive card fallback | No license warning; theme matches Jaii; mobile fallback usable |
 | 29 | API + Query foundation | ⬜ Pending | DeepSeek v4 Flash | TanStack Query installed, root QueryClient provider, typed fetch wrapper, normalized API error type, query key factories, placeholder domain hooks | Build passes; tiny non-visual query proof succeeds |
 | 30 | MSW + Saudi demo dataset | ⬜ Pending | DeepSeek v4 Flash | MSW installed, fictional Saudi demo data for all domains (overview, orders, customers, notifications, pricing, drivers, partners, zones, analytics), SAR in halalas, Gregorian dates, Riyadh/Jeddah districts, AR/EN names, Saudi phones, mock endpoints with filters/latency, data outside components | MSW starts only in dev; existing pages don't break |
-| 31 | Demo authentication + permissions | ⬜ Pending | DeepSeek v4 Flash | Demo session provider (owner/manager/staff), protected dashboard routing, demo login redirect, user menu role switch (dev), permission helper, no real tokens/refresh/backend | `/dashboard` redirects when off; each role changes visible nav/actions |
+| 31 | Demo authentication + permissions | ⬜ Pending | DeepSeek v4 Flash | Focused Zustand demo-session store (owner/manager/staff), protected dashboard routing, demo login redirect, user-menu role switch, permission helper, no AuthContext or real tokens | `/dashboard` redirects when off; each role changes visible navigation/actions |
 | 32 | Overview visual composition | ⬜ Pending | MiniMax M2.7 | `/dashboard` static typed placeholders: greeting, period selector, KPI cards, revenue chart, order-status chart, recent orders, attention queue, top services, quick actions, chart wrappers + dashboard patterns | Overview looks like premium commercial template before data wiring |
 | 33 | Overview mock-data wiring | ⬜ Pending | DeepSeek v4 Flash | TanStack Query hooks + MSW, period switching, loading skeletons, no-data/error states, localized SAR/date/number formatting, role-aware financial visibility | Period changes update metrics/charts; all data states usable |
 | 34 | Orders list | ⬜ Pending | DeepSeek v4 Flash | `/dashboard/orders` with MUI X Data Grid Community + mobile card fallback, search, status/driver/date filters, sorting, pagination, status chips, amount/date formatting, row action menu, URL-synced filters, query hooks + MSW | Filters survive refresh; AR + mobile layouts usable |
@@ -111,7 +117,7 @@
 | `@emotion/cache` | ✅ Installed | Added in Phase 1 |
 | `@iconify/react` | ❌ Missing | Not installed; will be added in Phase 4 |
 | Font packages | ❌ Missing | Public Sans, Tajawal not installed; will be added in Phase 4 |
-| Zustand | ❌ Missing | Not installed; will be added in Phase 9 |
+| Zustand | ✅ Installed | `zustand@5.0.14`; added during revised Phase 6 and used for global mode state |
 | TanStack Query | ❌ Missing | Not installed; will be added in Phase 29 |
 | MSW | ❌ Missing | Not installed; will be added in Phase 30 |
 | ApexCharts | ❌ Missing | Not installed; will be added in Phase 24 |
@@ -557,18 +563,26 @@ pnpm run build
 - RTL/LTR behavior preserved from Phase 3
 
 ### Limitations / Known Issues
-- Theme switching controls not yet implemented (Phase 6 completed this)
+- Theme switching controls were implemented in revised Phase 7
 - Only light mode currently (Phase 6 adds dark mode)
 - `@tanstack/react-query` module-not-found in `queryClient.ts` remains as a pre-existing issue (Phase 29)
 
 ### Next Phase
-**Phase 6 — Light/Dark/Theme Generation** (Model: DeepSeek v4 Flash) ✅ **Complete**
+**Revised Phases 6–7 — Zustand Foundation and Light/Dark/System Mode** ✅ **Complete**
 
 **No existing dependencies downgraded.** ✅
 
 ---
 
-## Phase 6 — Light/Dark/Theme Generation Results
+## Phases 6–7 — Zustand Foundation and Light/Dark/System Results
+
+> This work was originally recorded as one “Phase 6” implementation. After the roadmap was corrected to establish Zustand before mode behavior, the completed work maps to:
+>
+> - **Revised Phase 6:** Zustand global UI-state foundation
+> - **Revised Phase 7:** Light, dark, and system mode
+>
+> Both are complete. Continue with **Phase 8 — Six primary-color presets**.
+
 
 ### Changed Files
 
@@ -585,14 +599,18 @@ pnpm run build
 | `app/lib/theme/overrides/dialog.ts` | **Modified** — Dialog shadow/modal, content dividers, backdrop (dark/light variants) all theme-aware |
 | `app/lib/theme/overrides/chip.ts` | **Modified** — Filled chip `color` uses `theme.palette.text.secondary` instead of hardcoded light-mode grey |
 | `app/lib/theme/overrides/tooltip.ts` | **Modified** — Tooltip background uses dark/light variant |
+| `app/lib/theme/overrides/menu.ts` | **Created** — MuiMenu and MuiMenuItem theme-aware overrides with rounded corners, subtle shadow, dark/light support |
+| `app/lib/theme/overrides/index.ts` | **Modified** — Registered MuiMenu and MuiMenuItem overrides |
 | `app/root.tsx` | **Modified** — Added `data-mode="light"` default attribute on `<html>` for SSR consistency |
 | `package.json` | **Modified** — Added `zustand@5.0.14` dependency |
 
 ### Architecture
 
 1. **Zustand Settings Store** (`app/stores/settings.ts`):
+   - This is the authoritative source for mutable cross-route appearance state.
    - Singleton Zustand store created with `create()` at module scope
-   - State: `mode: Mode` ('light' | 'dark' | 'system'), `resolvedMode: ResolvedMode` ('light' | 'dark')
+   - Current implemented state: `mode: Mode` ('light' | 'dark' | 'system'), `resolvedMode: ResolvedMode` ('light' | 'dark')
+   - Additional preset/radius/compact/contrast/font settings are introduced in revised Phases 8–9 rather than through Context.
    - Action: `setMode(mode)` — updates both state fields, resolves system preference, persists to `localStorage`, updates `<html data-mode>` and `<html style="color-scheme">`
    - Export-only `resolveMode()` helper used by `setMode` action
    - `initializeSettings()` function called once after hydration: loads persisted preference, attaches OS `prefers-color-scheme` change listener
@@ -666,18 +684,112 @@ pnpm run build
   - Chip text uses `theme.palette.text.secondary` (readable in both modes)
   - Backdrop in dark mode uses `rgba(0, 0, 0, 0.72)` instead of light mode's `rgba(22, 28, 36, 0.64)`
   - Tooltip uses lighter background in dark mode for better visibility
+  - Menu component renders with theme-aware colors, rounded corners, and subtle shadow in both modes
 - Mode selection does not affect language/direction (orthogonal concern)
 - All Phase 5 theme proof components and Phase 3 RTL/LTR behavior preserved
 
 ### Limitations / Known Issues
 - Mode preference persisted to `localStorage` via Zustand store action (not via `persist` middleware — manual `localStorage` read/write for simplicity)
-- No high-contrast mode (Phase 8)
-- No color preset selection (Phase 7)
+- No high-contrast mode (Phase 9)
 - `@tanstack/react-query` module-not-found in `queryClient.ts` remains as a pre-existing issue (Phase 29)
 - Hydration mismatch occurs when persisted preference or OS preference differs from default light mode (same acceptable trade-off as Phase 3 direction context)
 - `DirectionContext` remains as a custom React Context (bridges i18n library to MUI direction, not application-state — separate concern)
 
 ### Next Phase
-**Phase 7 — Six Primary-Color Presets** (Model: DeepSeek v4 Flash)
+**Phase 9 — Shape, Density, Contrast, and Typography Preferences** (Model: DeepSeek v4 Flash)
+
+**No existing dependencies downgraded.** ✅
+
+---
+
+## Phase 8 — Six Primary-Color Presets Results
+
+### Changed Files
+
+| File | Change |
+|------|--------|
+| `app/lib/theme/palette.ts` | **Modified** — Added `hexToRgba()` helper, `ExtendedPrimaryPalette` interface, `createExtendedPrimary()` (computes hover/selected/focus/translucent alpha states), `createChartSeries()` (dynamic series ordered with active preset first), updated preset hex values for richer tonal range |
+| `app/lib/theme/theme-augmentation.ts` | **Modified** — Added `palette.primary` to `jaii` namespace with all 10 extended tokens (lighter, light, main, dark, darker, contrastText, hover, selected, focus, translucent) |
+| `app/lib/theme/index.ts` | **Modified** — Calls `createExtendedPrimary()` and `createChartSeries()` inside `createJaiiTheme()`, passes extended palette and dynamic series through `jaii` namespace |
+| `app/stores/settings.ts` | **Modified** — Added `PrimaryPresetKey` type, `primaryPreset` state (default `"cyan"`), `setPrimaryPreset` action, persistence to `localStorage` under `jaii-primary-preset` key, loads persisted preset during `initializeSettings()` |
+| `app/lib/providers.tsx` | **Modified** — Reads `primaryPreset` from Zustand store via narrow selector, passes to `createJaiiTheme()`, added `primaryPreset` to `useMemo` dependency array |
+| `app/routes/home.tsx` | **Modified** — Added 6-color swatch preset selector (rounded buttons with check mark on active), replaced hardcoded icon colors (`#00A76F`, `#FF3030`, `#FDA92D`, `#078DEE`) with theme semantic palette (`theme.palette.success.main`, `theme.palette.error.main`, `theme.palette.warning.main`, `theme.palette.info.main`), removed hardcoded "Cyan Primary" subtitle text, added `preset` and `main-color` chips to theme info section |
+
+### Architecture
+
+1. **Extended Primary Palette** (`app/lib/theme/palette.ts`):
+   - Each of the 6 presets stores explicit hex values for: `lighter`, `light`, `main`, `dark`, `darker`, `contrastText`
+   - Extended states (`hover`, `selected`, `focus`, `translucent`) are computed at theme-creation time via `createExtendedPrimary()` using `hexToRgba(main, opacity)`:
+     - `hover`: 8% opacity — background hover state
+     - `selected`: 12% opacity — selected/active background
+     - `focus`: 20% opacity — focus ring overlay
+     - `translucent`: 8% opacity — subtle overlays
+   - Preset hex values refined for better tonal range (e.g., Cyan lighter: `#CAFDF5`, Emerald lighter: `#C8FAD6`, etc.)
+
+2. **Dynamic Chart Series** (`app/lib/theme/palette.ts`):
+   - `createChartSeries(preset)` returns a 6-color array with the active preset's `main` as the first entry, followed by the other 5 preset mains in a fixed order
+   - This ensures chart colors always emphasize the active primary
+
+3. **Theme Types** (`app/lib/theme/theme-augmentation.ts`):
+   - `jaii.palette.primary` added with all 10 extended tokens
+   - `ThemeOptions.jaii.palette.primary` declared as optional
+
+4. **Zustand State** (`app/stores/settings.ts`):
+   - `PrimaryPresetKey` type re-exported from settings store (self-contained, same union as palette's)
+   - `primaryPreset: PrimaryPresetKey` state field (default: `"cyan"`)
+   - `setPrimaryPreset(preset)` action — updates state, persists to `localStorage`
+   - `initializeSettings()` now loads both persisted mode and persisted preset
+
+5. **Provider Wiring** (`app/lib/providers.tsx`):
+   - Two narrow Zustand selectors: `resolvedMode` and `primaryPreset`
+   - `useMemo` depends on both `resolvedMode` and `primaryPreset` — theme re-creates when either changes
+   - No duplicate state, no React Context for settings
+
+6. **Temporary Selector** (`app/routes/home.tsx`):
+   - 6 circular color swatches (28px each) with tooltips showing name and hex
+   - Active preset shows a check icon
+   - Clicking calls `setPrimaryPreset()` which updates Zustand → re-creates theme → all MUI primary-colored components update immediately
+   - Keyboard accessible (Enter/Space)
+
+### Commands Run and Results
+
+```bash
+# Type generation + typecheck
+pnpm run typecheck
+# → Passes (exit code 0)
+
+# Production build
+pnpm run build
+# → Success: client + SSR environments built
+```
+
+### Typecheck Status
+- `pnpm run typecheck` — **Passes** (exit code 0)
+- Only pre-existing failure: `app/lib/queryClient.ts` — Cannot find module `@tanstack/react-query` (Phase 29)
+
+### Build Status
+- `pnpm run build` — **Passes** (client + SSR environments)
+
+### Verified Behavior
+- Home page renders brand card + theme proof + typography proof + icons + RTL proof
+- 6 color swatches appear below the mode selector in the brand card
+- Default Cyan swatch shows check mark (active)
+- Clicking any swatch:
+  - Immediately updates the primary color across all MUI components (buttons, chips, IconButton color="primary", gradient card, etc.)
+  - Check mark moves to the selected swatch
+  - Theme info chip shows `preset: <name>` and the hex value chip updates
+- Preset persists across page refresh (localStorage `jaii-primary-preset`)
+- Preset restoration works alongside mode restoration
+- Language, direction, and mode controls unaffected by preset changes
+- No hardcoded primary colors remain in proof components — icon colors use `theme.palette.success/error/warning/info.main`
+- No hardcoded "Cyan Primary" label — subtitle reads "Theme Components" only
+
+### Limitations / Known Issues
+- Preset selector is temporary (unstyled swatches in the brand card) — final styled control added in Phase 12 customizer
+- Primary preset persists independently of mode — both restored on refresh
+- `@tanstack/react-query` module-not-found in `queryClient.ts` remains as a pre-existing issue (Phase 29)
+
+### Next Phase
+**Phase 9 — Shape, Density, Contrast, and Typography Preferences** (Model: DeepSeek v4 Flash)
 
 **No existing dependencies downgraded.** ✅

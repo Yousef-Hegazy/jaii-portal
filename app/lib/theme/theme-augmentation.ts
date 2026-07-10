@@ -29,6 +29,21 @@ declare module "@mui/material/styles" {
         grid: { light: string; dark: string };
         text: { light: string; dark: string };
       };
+      /** Extended palette tokens for the active primary preset */
+      palette: {
+        primary: {
+          lighter: string;
+          light: string;
+          main: string;
+          dark: string;
+          darker: string;
+          contrastText: string;
+          hover: string;
+          selected: string;
+          focus: string;
+          translucent: string;
+        };
+      };
       /** Shape configuration with custom radii */
       shape: {
         borderRadius: number;
@@ -71,6 +86,10 @@ declare module "@mui/material/styles" {
       neutral?: Record<number, string>;
       /** Semantic status colors */
       semantic?: Theme["jaii"]["semantic"];
+      /** Extended palette tokens */
+      palette?: {
+        primary?: Theme["jaii"]["palette"]["primary"];
+      };
       /** Chart color configuration */
       chart?: Theme["jaii"]["chart"];
       /** Shape configuration */

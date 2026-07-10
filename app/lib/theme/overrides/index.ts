@@ -33,6 +33,7 @@ import {
 import { drawerOverrides } from "./drawer";
 import { chipOverrides } from "./chip";
 import { iconButtonOverrides } from "./iconButton";
+import { menuOverrides, menuItemOverrides } from "./menu";
 
 /**
  * Creates complete component overrides for MUI theme.
@@ -60,6 +61,8 @@ export function createComponentOverrides(): Components<Theme> {
     MuiDrawer: drawerOverrides,
     MuiChip: chipOverrides,
     MuiIconButton: iconButtonOverrides,
+    MuiMenu: menuOverrides,
+    MuiMenuItem: menuItemOverrides,
   };
 }
 
@@ -86,4 +89,6 @@ export {
   drawerOverrides,
   chipOverrides,
   iconButtonOverrides,
+  menuOverrides,
+  menuItemOverrides,
 };
