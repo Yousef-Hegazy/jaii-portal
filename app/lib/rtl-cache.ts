@@ -1,28 +1,36 @@
+/**
+ * Emotion cache for MUI components.
+ *
+ * Uses the default Emotion cache (key "css") to ensure class name consistency
+ * between SSR and client hydration. React Router Framework Mode SSR does not
+ * respect custom CacheProvider keys, so custom cache keys (e.g., "muirtl")
+ * caused hydration mismatches where the server rendered "css-xxx" classes
+ * while the client expected "muirtl-xxx".
+ *
+ * MUI v9 handles RTL (right-to-left) through theme.direction alone via its
+ * built-in RtlProvider. The @mui/stylis-plugin-rtl is not required for MUI
+ * components. Custom CSS uses logical properties (margin-inline-start, etc.)
+ * per project conventions, which naturally support both directions.
+ */
+
 import createCache from "@emotion/cache";
-import { prefixer } from "stylis";
-import rtlPlugin from "@mui/stylis-plugin-rtl";
 
 /**
- * Emotion cache for RTL (right-to-left) direction.
- * Uses stylis prefixer + MUI RTL plugin to flip CSS properties.
+ * Default Emotion cache.
+ * Uses the "css" key (Emotion default) so SSR and client produce matching
+ * class name prefixes, avoiding hydration mismatch errors.
  */
-export const rtlCache = createCache({
-  key: "muirtl",
-  stylisPlugins: [prefixer, rtlPlugin],
+const defaultCache = createCache({
+  key: "css",
 });
 
 /**
- * Emotion cache for LTR (left-to-right) direction.
- * Uses only stylis prefixer (no RTL transformation).
+ * Returns the Emotion cache for the given direction.
+ * Since we use the default cache, the same instance is returned for both
+ * RTL and LTR. RTL is handled by MUI's ThemeProvider via theme.direction.
+ *
+ * @param _direction - "rtl" | "ltr" (ignored, kept for API compatibility)
  */
-export const ltrCache = createCache({
-  key: "muiltr",
-  stylisPlugins: [prefixer],
-});
-
-/**
- * Returns the appropriate Emotion cache based on direction.
- */
-export function getCache(direction: "rtl" | "ltr") {
-  return direction === "rtl" ? rtlCache : ltrCache;
+export function getCache(_direction: "rtl" | "ltr") {
+  return defaultCache;
 }

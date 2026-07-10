@@ -39,7 +39,7 @@ i18n.use(HttpBackend)
     fallbackLng: "en",
     lng: "ar",
     defaultNS: "common",
-    ns: ["common"],
+    ns: NAMESPACES,
     load: "languageOnly",
     backend: {
       loadPath: "/locales/{{lng}}/{{ns}}.json",
@@ -52,6 +52,36 @@ i18n.use(HttpBackend)
       useSuspense: false,
     },
   });
+
+// ============================================================================
+// SSR: Preload translation resources from filesystem
+// ============================================================================
+// On the server, HttpBackend can't fetch translation JSON files (no browser
+// fetch origin). We preload all resources synchronously so that the SSR HTML
+// contains translated text instead of raw keys, preventing hydration mismatch.
+// Vite tree-shakes this entire block from the client build.
+
+if (import.meta.env.SSR) {
+  const { readFileSync } = await import("fs");
+  const { resolve } = await import("path");
+
+  const baseDir = import.meta.env.DEV
+    ? resolve(process.cwd(), "public", "locales")
+    : resolve(process.cwd(), "build", "client", "locales");
+
+  const SSR_LANGS = ["ar", "en"] as const;
+  for (const lng of SSR_LANGS) {
+    for (const ns of NAMESPACES) {
+      try {
+        const filePath = resolve(baseDir, lng, `${ns}.json`);
+        const content = readFileSync(filePath, "utf-8");
+        i18n.addResourceBundle(lng, ns, JSON.parse(content));
+      } catch {
+        // File may not exist for some language/namespace combinations
+      }
+    }
+  }
+}
 
 export default i18n;
 

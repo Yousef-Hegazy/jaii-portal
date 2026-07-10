@@ -1,15 +1,16 @@
-import { CacheProvider } from "@emotion/react";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import type { ReactNode } from "react";
 import { useMemo } from "react";
-import { getCache } from "./rtl-cache";
 import { DirectionProvider, useDirection } from "./direction-context";
 import { createJaiiTheme } from "./theme";
 
 /**
  * Inner providers that depend on direction context.
- * Creates theme with correct direction, language-aware typography,
- * and uses appropriate Emotion cache.
+ * Creates theme with correct direction and language-aware typography.
+ * No custom CacheProvider — the default Emotion cache (key "css")
+ * is used by both SSR and client, ensuring class name consistency
+ * during hydration. MUI's built-in RtlProvider (activated via
+ * theme.direction) handles RTL flipping for all MUI components.
  */
 function ThemedProviders({ children }: { children: ReactNode }) {
   const { direction, language } = useDirection();
@@ -26,16 +27,11 @@ function ThemedProviders({ children }: { children: ReactNode }) {
     [direction, language]
   );
 
-  // Get the appropriate cache for current direction
-  const cache = useMemo(() => getCache(direction), [direction]);
-
   return (
-    <CacheProvider value={cache}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        {children}
-      </ThemeProvider>
-    </CacheProvider>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      {children}
+    </ThemeProvider>
   );
 }
 
@@ -46,9 +42,12 @@ interface AppProvidersProps {
 /**
  * Root application providers.
  * - DirectionProvider: Syncs direction with i18n language
- * - CacheProvider: Emotion cache (RTL or LTR based on direction)
  * - ThemeProvider: MUI theme with correct direction
  * - CssBaseline: Global CSS reset
+ *
+ * Note: No custom CacheProvider is used. Both SSR and client
+ * rely on the default Emotion cache, preventing class name
+ * prefix mismatches that cause hydration errors.
  */
 export default function AppProviders({ children }: AppProvidersProps) {
   return (
