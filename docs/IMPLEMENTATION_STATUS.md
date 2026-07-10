@@ -5,6 +5,7 @@
 **Phase 1 — Root Provider Skeleton** ✅ Complete
 **Phase 2 — Translation Source of Truth** ✅ Complete
 **Phase 3 — Correct MUI RTL/LTR Engine** ✅ Complete
+**Phase 4 — Font and Icon Foundation** ✅ Complete
 
 ---
 
@@ -16,7 +17,7 @@
 | 1 | Root provider skeleton | ✅ **Done** | DeepSeek v4 Flash | MUI ThemeProvider, CssBaseline, Emotion CacheProvider, minimal app providers, MUI home placeholder | `/` renders MUI styling; production build succeeds |
 | 2 | Translation source of truth | ✅ **Done** | DeepSeek v4 Flash | i18next config-only, 7 initial namespaces, language switch proof | Language switch changes visible text; correct namespace files requested; no duplicate catalog |
 | 3 | Correct MUI RTL/LTR engine | ✅ **Done** | GLM-5 | Document lang/dir, theme direction, Emotion RTL caches, stylis prefixer + MUI RTL plugin, portal components | TextField, Dialog, spacing, document direction mirror correctly without reload |
-| 4 | Font and icon foundation | ⬜ Pending | DeepSeek v4 Flash | Public Sans (EN), Tajawal (AR), @iconify/react, typography tokens, language-switched fonts | Arabic uses Tajawal, English uses Public Sans, icons render without extra library |
+| 4 | Font and icon foundation | ✅ **Done** | DeepSeek v4 Flash | Public Sans (EN), Tajawal (AR), @iconify/react, typography tokens, language-switched fonts | Arabic uses Tajawal, English uses Public Sans, icons render without extra library |
 | 5 | Base MUI theme anatomy | ⬜ Pending | GLM-5 | Semantic palette, neutral scale, typography, spacing, shape, shadows, transitions, z-index, TS augmentation, component overrides structure | Proof components look coherent/premium in default light theme (Cyan primary) |
 | 6 | Light/dark/theme generation | ⬜ Pending | DeepSeek v4 Flash | Complete light/dark/system modes, OS preference following, no reload, temp mode selector | All proof components affected in light/dark/system including open Dialog/menu |
 | 7 | Six primary-color presets | ⬜ Pending | DeepSeek v4 Flash | Emerald, Cyan, Purple, Blue, Orange, Red with full tonal palettes, temp preset selector | Every preset attractive/readable in light+dark; Cyan default; no hardcoded primary |
