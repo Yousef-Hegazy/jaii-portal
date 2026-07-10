@@ -6,6 +6,7 @@
  * - Smooth hover transitions
  * - Premium shadow on primary variant
  * - Consistent padding and border-radius
+ * - Theme-aware shadows (light/dark)
  */
 
 import type { Theme, Components } from "@mui/material/styles";
@@ -18,15 +19,15 @@ export const buttonOverrides: Components<Theme>["MuiButton"] = {
       borderRadius: 8,
       transition: "all 150ms cubic-bezier(0.4, 0, 0.2, 1)",
     },
-    contained: {
-      boxShadow: "0 2px 4px rgba(7, 141, 238, 0.24)",
+    contained: ({ theme }) => ({
+      boxShadow: theme.jaii.shadows.buttonPrimary,
       "&:hover": {
-        boxShadow: "0 4px 8px rgba(7, 141, 238, 0.32)",
+        boxShadow: theme.jaii.shadows.buttonPrimaryHover,
       },
       "&:active": {
-        boxShadow: "0 1px 2px rgba(7, 141, 238, 0.20)",
+        boxShadow: theme.jaii.shadows.buttonPrimary,
       },
-    },
+    }),
     outlined: {
       boxShadow: "none",
       "&:hover": {

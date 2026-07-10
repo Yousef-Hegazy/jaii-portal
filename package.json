@@ -27,7 +27,8 @@
     "react-dom": "^19.2.7",
     "react-i18next": "^17.0.9",
     "react-router": "8.0.0",
-    "stylis": "^4.4.0"
+    "stylis": "^4.4.0",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@react-router/dev": "8.0.0",

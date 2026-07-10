@@ -7,6 +7,7 @@
 **Phase 3 — Correct MUI RTL/LTR Engine** ✅ Complete
 **Phase 4 — Font and Icon Foundation** ✅ Complete
 **Phase 5 — Base MUI Theme Anatomy** ✅ Complete
+**Phase 6 — Light/Dark/Theme Generation** ✅ Complete
 
 ---
 
@@ -20,7 +21,7 @@
 | 3 | Correct MUI RTL/LTR engine | ✅ **Done** | GLM-5 | Document lang/dir, theme direction, Emotion RTL caches, stylis prefixer + MUI RTL plugin, portal components | TextField, Dialog, spacing, document direction mirror correctly without reload |
 | 4 | Font and icon foundation | ✅ **Done** | DeepSeek v4 Flash | Public Sans (EN), Tajawal (AR), @iconify/react, typography tokens, language-switched fonts | Arabic uses Tajawal, English uses Public Sans, icons render without extra library |
 | 5 | Base MUI theme anatomy | ✅ **Done** | GLM-5 | Semantic palette, neutral scale, typography, spacing, shape, shadows, transitions, z-index, TS augmentation, component overrides structure | Proof components look coherent/premium in default light theme (Cyan primary) |
-| 6 | Light/dark/theme generation | ⬜ Pending | DeepSeek v4 Flash | Complete light/dark/system modes, OS preference following, no reload, temp mode selector | All proof components affected in light/dark/system including open Dialog/menu |
+| 6 | Light/dark/theme generation | ✅ **Done** | DeepSeek v4 Flash | Complete light/dark/system modes, OS preference following, no reload, temp mode selector | All proof components affected in light/dark/system including open Dialog/menu |
 | 7 | Six primary-color presets | ⬜ Pending | DeepSeek v4 Flash | Emerald, Cyan, Purple, Blue, Orange, Red with full tonal palettes, temp preset selector | Every preset attractive/readable in light+dark; Cyan default; no hardcoded primary |
 | 8 | Shape, density, contrast, typography preferences | ⬜ Pending | DeepSeek v4 Flash | Radius (4), compact (on/off), contrast (2), font family (4 + Arabic), font size (14-18), temp controls | Each setting causes obvious global change on real MUI components |
 | 9 | Preference store + first-paint bootstrap | ⬜ Pending | GLM-5 | Zustand store with versioned model, safe parsing/migration/reset, pre-hydration bootstrap, no flash | Refresh preserves controls; no light/direction flash |
@@ -556,11 +557,127 @@ pnpm run build
 - RTL/LTR behavior preserved from Phase 3
 
 ### Limitations / Known Issues
-- Theme switching controls not yet implemented (Phase 6+)
+- Theme switching controls not yet implemented (Phase 6 completed this)
 - Only light mode currently (Phase 6 adds dark mode)
 - `@tanstack/react-query` module-not-found in `queryClient.ts` remains as a pre-existing issue (Phase 29)
 
 ### Next Phase
-**Phase 6 — Light/Dark/Theme Generation** (Model: DeepSeek v4 Flash)
+**Phase 6 — Light/Dark/Theme Generation** (Model: DeepSeek v4 Flash) ✅ **Complete**
+
+**No existing dependencies downgraded.** ✅
+
+---
+
+## Phase 6 — Light/Dark/Theme Generation Results
+
+### Changed Files
+
+| File | Change |
+|------|--------|
+| `app/stores/settings.ts` | **Created** — Typed Zustand settings store with `mode`, `resolvedMode`, `setMode` action, OS `prefers-color-scheme` listener, localStorage persistence, document attribute updates |
+| `app/lib/mode-context.tsx` | **Deleted** — Replaced by Zustand `useSettingsStore` |
+| `app/lib/providers.tsx` | **Modified** — Removed `ModeProvider`, added `SettingsInitializer` component (calls `initializeSettings()` after hydration); `ThemedProviders` selects `resolvedMode` via narrow Zustand selector |
+| `app/routes/home.tsx` | **Modified** — Uses `useSettingsStore` selectors (`mode`, `resolvedMode`, `setMode`) directly instead of `useMode()` |
+| `app/lib/theme/overrides/card.ts` | **Modified** — Card border/shadow uses theme-aware values (`theme.palette.divider`, `theme.jaii.shadows`) |
+| `app/lib/theme/overrides/paper.ts` | **Modified** — Paper border/shadow uses theme-aware values |
+| `app/lib/theme/overrides/button.ts` | **Modified** — Button shadows reference `theme.jaii.shadows` for mode-aware shadows |
+| `app/lib/theme/overrides/drawer.ts` | **Modified** — Drawer border uses `theme.palette.divider` |
+| `app/lib/theme/overrides/dialog.ts` | **Modified** — Dialog shadow/modal, content dividers, backdrop (dark/light variants) all theme-aware |
+| `app/lib/theme/overrides/chip.ts` | **Modified** — Filled chip `color` uses `theme.palette.text.secondary` instead of hardcoded light-mode grey |
+| `app/lib/theme/overrides/tooltip.ts` | **Modified** — Tooltip background uses dark/light variant |
+| `app/root.tsx` | **Modified** — Added `data-mode="light"` default attribute on `<html>` for SSR consistency |
+| `package.json` | **Modified** — Added `zustand@5.0.14` dependency |
+
+### Architecture
+
+1. **Zustand Settings Store** (`app/stores/settings.ts`):
+   - Singleton Zustand store created with `create()` at module scope
+   - State: `mode: Mode` ('light' | 'dark' | 'system'), `resolvedMode: ResolvedMode` ('light' | 'dark')
+   - Action: `setMode(mode)` — updates both state fields, resolves system preference, persists to `localStorage`, updates `<html data-mode>` and `<html style="color-scheme">`
+   - Export-only `resolveMode()` helper used by `setMode` action
+   - `initializeSettings()` function called once after hydration: loads persisted preference, attaches OS `prefers-color-scheme` change listener
+   - OS listener re-calls `setMode(getState().mode)` — if mode is 'system', re-resolves with new OS preference; otherwise no-op
+   - SSR-safe: singleton is shared across server requests but that's correct because SSR always renders default (light) mode
+   - No request-scoped data in the store
+
+2. **Provider Architecture**:
+   - `SettingsInitializer` — minimal `<>{children}</>` wrapper that runs `initializeSettings()` in a `useEffect` once after mount. No context provider, no state mirroring.
+   - `DirectionProvider` — kept as-is (bridges i18n library to MUI direction, separate concern)
+   - `ThemedProviders` — selects `resolvedMode` via `useSettingsStore(s => s.resolvedMode)` (narrow Zustand selector, no unnecessary re-renders), creates theme with `createJaiiTheme({ mode: resolvedMode, ... })`
+   - No custom global-state Context providers remain
+
+3. **Components Call Zustand Directly**:
+   - `home.tsx` uses three separate narrow selectors: `useSettingsStore(s => s.mode)`, `useSettingsStore(s => s.resolvedMode)`, `useSettingsStore(s => s.setMode)`
+   - No `useMode()` hook, no React Context for mode state
+   - Mode and resolved mode are never mirrored in local component state
+
+4. **Hydration Strategy**:
+   - SSR renders light mode (safe default, store initializes with mode='system', resolvedMode='light')
+   - Client hydrates with matching default state
+   - After hydration, `SettingsInitializer` runs, loads persisted preference, resolves OS preference, triggers store update → theme re-creates
+   - Minimal hydration mismatch (documented, same approach as Phase 3 direction context)
+
+5. **Theme-Aware Overrides**:
+   - All component overrides that previously used hardcoded light-mode colors now use `theme.palette.divider`, `theme.palette.text.secondary`, `theme.jaii.shadows`, and mode-aware branches
+   - This ensures card borders, paper outlines, chip colors, backdrop overlays, tooltip backgrounds, dialog shadows, and divider colors all work correctly in both light and dark modes
+
+### Commands Run and Results
+
+```bash
+# Install Zustand (v5, latest stable)
+pnpm add zustand
+# → Added zustand@5.0.14
+
+# Type generation + typecheck
+pnpm run typecheck
+# → Passes (only pre-existing @tanstack/react-query error, Phase 29)
+
+# Production build
+pnpm run build
+# → Success: client + SSR environments built
+```
+
+### Typecheck Status
+- `pnpm run typecheck` — **Only pre-existing failure (not caused by Phase 6):**
+  - `app/lib/queryClient.ts` — Cannot find module `@tanstack/react-query` (package not in `package.json`, Phase 29)
+- No new typecheck errors introduced by Phase 6.
+- Fixed `PaletteColorOptions` augmentation conflict in `theme-augmentation.ts` (removed duplicate declaration).
+
+### Build Status
+- `pnpm run build` — **Passes** (client + SSR environments)
+
+### Verified Behavior
+- `/` route renders with brand card + theme proof section + typography proof + icon proof + RTL proof
+- Mode selector buttons (Light / Dark / System) appear below the language switcher
+- Clicking each mode button:
+  - Immediately updates the theme (no page reload)
+  - All components reflect the new mode: backgrounds, text, borders, shadows, chips, buttons, cards
+  - Theme info chips show `mode` and `resolvedMode` values correctly
+- System mode:
+  - Default mode on first visit (no persisted preference)
+  - Follows OS `prefers-color-scheme`: dark mode automatically when OS is dark
+  - Switching OS preference while on the page triggers automatic theme update
+- Persistence:
+  - Selecting "Dark" persists to `localStorage` as `jaii-mode=dark`
+  - Refreshing the page restores dark mode
+  - Selecting "System" restores OS-following behavior
+- All component overrides render correctly in both modes:
+  - Card borders use `theme.palette.divider` (subtle in both modes)
+  - Chip text uses `theme.palette.text.secondary` (readable in both modes)
+  - Backdrop in dark mode uses `rgba(0, 0, 0, 0.72)` instead of light mode's `rgba(22, 28, 36, 0.64)`
+  - Tooltip uses lighter background in dark mode for better visibility
+- Mode selection does not affect language/direction (orthogonal concern)
+- All Phase 5 theme proof components and Phase 3 RTL/LTR behavior preserved
+
+### Limitations / Known Issues
+- Mode preference persisted to `localStorage` via Zustand store action (not via `persist` middleware — manual `localStorage` read/write for simplicity)
+- No high-contrast mode (Phase 8)
+- No color preset selection (Phase 7)
+- `@tanstack/react-query` module-not-found in `queryClient.ts` remains as a pre-existing issue (Phase 29)
+- Hydration mismatch occurs when persisted preference or OS preference differs from default light mode (same acceptable trade-off as Phase 3 direction context)
+- `DirectionContext` remains as a custom React Context (bridges i18n library to MUI direction, not application-state — separate concern)
+
+### Next Phase
+**Phase 7 — Six Primary-Color Presets** (Model: DeepSeek v4 Flash)
 
 **No existing dependencies downgraded.** ✅

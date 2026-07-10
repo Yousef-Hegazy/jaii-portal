@@ -3,7 +3,7 @@
  *
  * Premium chip styles with:
  * - Consistent border radius
- * - Subtle filled variant
+ * - Theme-aware filled variant (light/dark)
  * - Proper RTL support
  */
 
@@ -23,29 +23,29 @@ export const chipOverrides: Components<Theme>["MuiChip"] = {
       height: 32,
       fontSize: "13px",
     },
-    filled: {
+    filled: ({ theme }) => ({
       backgroundColor: "rgba(145, 158, 171, 0.08)",
-      color: "rgb(99, 115, 129)",
+      color: theme.palette.text.secondary,
       "&:hover": {
         backgroundColor: "rgba(145, 158, 171, 0.16)",
       },
-    },
-    outlined: {
-      borderColor: "rgba(145, 158, 171, 0.24)",
+    }),
+    outlined: ({ theme }) => ({
+      borderColor: theme.palette.divider,
       "&:hover": {
         backgroundColor: "rgba(145, 158, 171, 0.04)",
       },
-    },
+    }),
     label: {
       paddingInline: 10,
     },
     icon: {
-      marginInlineStart: -4,
+      marginInlineStart: 4,
       marginInlineEnd: 4,
     },
     deleteIcon: {
       marginInlineStart: 4,
-      marginInlineEnd: -4,
+      marginInlineEnd: 4,
     },
   },
   defaultProps: {

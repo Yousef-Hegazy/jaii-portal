@@ -5,6 +5,7 @@
  * - Rounded corners for temporary drawers
  * - Subtle shadow
  * - Proper RTL edge handling
+ * - Theme-aware borders (light/dark)
  */
 
 import type { Theme, Components } from "@mui/material/styles";
@@ -16,18 +17,18 @@ export const drawerOverrides: Components<Theme>["MuiDrawer"] = {
       ...(ownerState.anchor === "left" && {
         "& .MuiDrawer-paper": {
           borderRight: "1px solid",
-          borderColor: "rgba(145, 158, 171, 0.16)",
+          borderColor: theme.palette.divider,
         },
       }),
       ...(ownerState.anchor === "right" && {
         "& .MuiDrawer-paper": {
           borderLeft: "1px solid",
-          borderColor: "rgba(145, 158, 171, 0.16)",
+          borderColor: theme.palette.divider,
         },
       }),
     }),
-    paper: {
-      boxShadow: "0 0 2px rgba(145, 158, 171, 0.20), 0 8px 32px rgba(145, 158, 171, 0.12)",
+    paper: ({ theme }) => ({
+      boxShadow: theme.jaii.shadows.drawer,
       "&.MuiDrawer-paperAnchorLeft": {
         borderTopRightRadius: 0,
         borderBottomRightRadius: 0,
@@ -48,7 +49,7 @@ export const drawerOverrides: Components<Theme>["MuiDrawer"] = {
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
       },
-    },
+    }),
   },
   defaultProps: {
     elevation: 0,

@@ -23,6 +23,7 @@ import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { TYPOGRAPHY_SCALE, getFontFamily } from "../lib/typography";
 import { useTheme } from "@mui/material/styles";
+import { useSettingsStore, type Mode } from "../stores/settings";
 
 import type { Route } from "./+types/home";
 
@@ -36,6 +37,9 @@ export function meta({}: Route.MetaArgs) {
 export default function Home() {
   const { t } = useTranslation("landing");
   const theme = useTheme();
+  const mode = useSettingsStore((s) => s.mode);
+  const resolvedMode = useSettingsStore((s) => s.resolvedMode);
+  const setMode = useSettingsStore((s) => s.setMode);
   const currentLang = i18n.language;
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -113,6 +117,38 @@ export default function Home() {
             >
               English
             </Button>
+          </Box>
+
+          {/* Temporary mode switch — not final styled control */}
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+              justifyContent: "center",
+              mt: 1.5,
+            }}
+          >
+            {(["light", "dark", "system"] as Mode[]).map((m) => (
+              <Button
+                key={m}
+                size="small"
+                variant={mode === m ? "contained" : "outlined"}
+                onClick={() => setMode(m)}
+                sx={{ minWidth: 48, fontSize: "12px" }}
+              >
+                {m === "light"
+                  ? currentLang === "ar"
+                    ? "فاتح"
+                    : "Light"
+                  : m === "dark"
+                    ? currentLang === "ar"
+                      ? "داكن"
+                      : "Dark"
+                    : currentLang === "ar"
+                      ? "تلقائي"
+                      : "System"}
+              </Button>
+            ))}
           </Box>
         </CardContent>
       </Card>
@@ -327,8 +363,14 @@ export default function Home() {
               <Box sx={{ display: "flex", gap: 1, mt: 1, flexWrap: "wrap" }}>
                 <Chip
                   size="small"
-                  label={`mode: ${theme.palette.mode}`}
+                  label={`mode: ${mode}`}
                   variant="outlined"
+                />
+                <Chip
+                  size="small"
+                  label={`resolved: ${resolvedMode}`}
+                  variant="outlined"
+                  color="primary"
                 />
                 <Chip
                   size="small"

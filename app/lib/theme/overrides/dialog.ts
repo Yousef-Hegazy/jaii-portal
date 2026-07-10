@@ -5,26 +5,23 @@
  * - Rounded corners
  * - Subtle shadow
  * - Smooth transitions
+ * - Theme-aware colors (light/dark)
  */
 
 import type { Theme, Components } from "@mui/material/styles";
-import { dialogClasses } from "@mui/material/Dialog";
-import { dialogTitleClasses } from "@mui/material/DialogTitle";
-import { dialogContentClasses } from "@mui/material/DialogContent";
-import { dialogActionsClasses } from "@mui/material/DialogActions";
 
 export const dialogOverrides: Components<Theme>["MuiDialog"] = {
   styleOverrides: {
     root: {
       // Container styles
     },
-    paper: {
+    paper: ({ theme }) => ({
       borderRadius: 16,
-      boxShadow: "0 0 2px rgba(145, 158, 171, 0.20), 0 16px 48px rgba(145, 158, 171, 0.16)",
+      boxShadow: theme.jaii.shadows.modal,
       margin: 16,
       maxHeight: "calc(100% - 32px)",
       maxWidth: "calc(100% - 32px)",
-    },
+    }),
     paperFullScreen: {
       borderRadius: 0,
       margin: 0,
@@ -54,11 +51,11 @@ export const dialogContentOverrides: Components<Theme>["MuiDialogContent"] = {
       padding: 20,
       borderTop: "none",
     },
-    dividers: {
+    dividers: ({ theme }) => ({
       borderTop: "1px solid",
       borderBottom: "1px solid",
-      borderColor: "rgba(145, 158, 171, 0.16)",
-    },
+      borderColor: theme.palette.divider,
+    }),
   },
 };
 
@@ -73,9 +70,12 @@ export const dialogActionsOverrides: Components<Theme>["MuiDialogActions"] = {
 
 export const backdropOverrides: Components<Theme>["MuiBackdrop"] = {
   styleOverrides: {
-    root: {
-      backgroundColor: "rgba(22, 28, 36, 0.64)",
-    },
+    root: ({ theme }) => ({
+      backgroundColor:
+        theme.palette.mode === "dark"
+          ? "rgba(0, 0, 0, 0.72)"
+          : "rgba(22, 28, 36, 0.64)",
+    }),
     invisible: {
       backgroundColor: "transparent",
     },

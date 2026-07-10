@@ -26,7 +26,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   // Always render with Arabic RTL for SSR/client hydration consistency
   // Direction changes happen client-side via DirectionProvider
   return (
-    <html lang="ar-SA" dir="rtl" suppressHydrationWarning>
+    <html lang="ar-SA" dir="rtl" data-mode="light" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
