@@ -100,7 +100,6 @@ export function createTypographyConfig(
   return {
     fontFamily,
     fontSize: baseFontSize,
-
     h1: {
       fontFamily,
       fontSize: `${TYPOGRAPHY_SCALE.h1.size}px`,

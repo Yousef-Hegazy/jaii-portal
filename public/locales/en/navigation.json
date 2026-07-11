@@ -10,6 +10,14 @@
   "zones": "Zones",
   "drivers": "Drivers",
   "appearance": "Appearance",
+  "showcaseComponents": "Components",
+  "showcaseCharts": "Charts",
+  "showcaseForms": "Forms",
+  "showcaseTables": "Tables",
+  "groups": {
+    "settings": "Settings",
+    "showcase": "Showcase"
+  },
   "sidebar": {
     "collapse": "Collapse sidebar",
     "expand": "Expand sidebar"

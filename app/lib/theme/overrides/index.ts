@@ -49,6 +49,13 @@ export function createComponentOverrides(
     MuiButton: buttonOverrides,
     MuiCard: cardOverrides,
     MuiCardActionArea: cardActionAreaOverrides,
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          textAlign: "start",
+        },
+      },
+    },
     MuiCardContent: {
       styleOverrides: {
         root: {

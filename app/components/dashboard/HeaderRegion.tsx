@@ -1,14 +1,14 @@
 /**
- * Header Region — Phase 15 Placeholder
+ * Header Region — Phase 16
  *
- * Placeholder top header for the dashboard frame.
- * Full header implementation comes in Phase 20.
+ * Top header for the dashboard frame.
+ * Updated to use dynamic nav width based on navLayout.
  *
  * Current behavior:
  * - Fixed top header bar
- * - Shows page title area
- * - Language switcher placeholder
- * - No detailed actions yet
+ * - Dynamic offset for nav width (260px vertical, 72px mini)
+ * - Language switcher
+ * - Settings trigger placeholder
  */
 
 import { useSettingsStore, resolveDirection } from "../../stores/settings";
@@ -20,11 +20,15 @@ export default function HeaderRegion() {
   const theme = useTheme();
   const language = useSettingsStore((s) => s.language);
   const directionPref = useSettingsStore((s) => s.direction);
+  const navLayout = useSettingsStore((s) => s.navLayout);
   const direction = resolveDirection(directionPref, language);
   const setLanguage = useSettingsStore((s) => s.setLanguage);
   const { t } = useTranslation("dashboard");
 
   const isRtl = direction === "rtl";
+
+  // Dynamic nav width based on layout
+  const navWidth = navLayout === "mini" ? 72 : 260;
 
   return (
     <Box
@@ -36,8 +40,8 @@ export default function HeaderRegion() {
         zIndex: theme.zIndex.appBar,
         display: "flex",
         alignItems: "center",
-        // Offset for nav width
-        marginInlineStart: "260px",
+        // Dynamic offset for nav width
+        marginInlineStart: `${navWidth}px`,
         height: 64,
         paddingInline: "24px",
         // Surface hierarchy: header elevated above content
@@ -47,6 +51,7 @@ export default function HeaderRegion() {
         // Subtle shadow
         boxShadow: theme.jaii.shadows.dropdown,
         gap: 2,
+        transition: "margin 0.2s ease",
       }}
     >
       {/* Page title placeholder */}

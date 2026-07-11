@@ -10,6 +10,14 @@
   "zones": "المناطق",
   "drivers": "السائقون",
   "appearance": "المظهر",
+  "showcaseComponents": "المكونات",
+  "showcaseCharts": "الرسوم البيانية",
+  "showcaseForms": "النماذج",
+  "showcaseTables": "الجداول",
+  "groups": {
+    "settings": "الإعدادات",
+    "showcase": "العروض"
+  },
   "sidebar": {
     "collapse": "طي القائمة",
     "expand": "توسيع القائمة"
