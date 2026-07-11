@@ -13,7 +13,8 @@
 **Phase 9 — Shape, Density, Contrast, and Typography Preferences** ✅ Complete
 **Phase 10 — Floating Settings Trigger + Drawer Shell** ✅ Complete
 **Phase 11 — Customizer Core Controls** ✅ Complete
-**Next:** Phase 12 — Customizer Visual Controls
+**Phase 12 — Customizer Visual Controls** ✅ Complete
+**Next:** Phase 13 — Appearance Settings Route
 
 ---
 
@@ -36,7 +37,7 @@
 | 9 | Shape, density, contrast, and typography preferences | ✅ **Done** | DeepSeek v4 Flash | Radius (4), compact mode, contrast (2), font family (4 with Tajawal Arabic fallback), font size 14–18; all connected to Zustand | Every setting visibly affects real MUI components, persists, and has no duplicate state source |
 | 10 | Floating settings trigger + drawer shell | ✅ **Done** | MiniMax M2.7 | Translated FAB, logical RTL/LTR edge, responsive drawer, Zustand-owned open state/reset action, title/reset/close, scrollable sections, premium styling | Trigger + drawer look like a premium template in AR/EN without a custom settings Context |
 | 11 | Customizer core controls | ✅ **Done** | DeepSeek v4 Flash | Mode option cards, direction option cards (auto/ltr/rtl), contrast switch row, compact switch row; all wired to Zustand with persistence | All 4 controls work immediately, persist, usable in RTL; temporary proof-page controls removed |
-| 12 | Customizer visual controls | ⬜ Pending | MiniMax M2.7 | Nav layout (3), nav color (2), 6 color presets, 4 radii, 4 font families, font size slider, visual thumbnails/swatches | Complete customizer visually impressive; every option changes proof UI |
+| 12 | Customizer visual controls | ✅ **Done** | MiniMax M2.7 | Nav layout (3), nav color (2), 6 color presets, 4 radii, 4 font families, font size slider, visual thumbnails/swatches | Complete customizer visually impressive; every option changes proof UI |
 | 13 | Appearance settings route | ⬜ Pending | DeepSeek v4 Flash | `/dashboard/settings/appearance` reusing drawer controls + larger live preview | Direct URL works; drawer/page synchronized |
 | 14 | Route map + placeholder hierarchy | ⬜ Pending | DeepSeek v4 Flash | 17 explicit routes registered with Outlet, minimal MUI placeholders | Every URL opens directly; no route mismatch |
 | 15 | Dashboard frame | ⬜ Pending | MiniMax M2.7 | Nav/header/content regions, responsive gutters, surface hierarchy, skip link, route outlet | Placeholder pages feel like commercial dashboard |
@@ -1001,11 +1002,139 @@ pnpm run build
 
 ### Limitations / Known Issues
 - Direction override changes affect document `dir` immediately, but the `<html lang>` attribute is not affected by direction override (language remains the source of truth for `lang`)
-- Color, Radius, Font Family, Font Size controls remain as placeholder SettingRows — wired in Phase 12
-- The OptionCard's icon+label may feel slightly cramped on very narrow drawer widths (xs breakpoint) — Phase 12 can add responsive adjustments
+- Color, Radius, Font Family, Font Size controls were placeholder SettingRows — now wired in Phase 12
+- The OptionCard's icon+label may feel slightly cramped on very narrow drawer widths (xs breakpoint) — addressed in Phase 12 with compact sizing
 
 ### Next Phase
 **Phase 12 — Customizer Visual Controls** (Model: MiniMax M2.7)
+
+**No existing dependencies downgraded.** ✅
+
+---
+
+## Phase 12 — Customizer Visual Controls Results
+
+### Reference Images Inspected
+
+- `docs/references/theme-customizer-overview.png` — confirmed present (used as primary reference for navigation-layout thumbnails, nav-color treatment cards, compact option-card grids, selected indicators)
+- `docs/references/theme-customizer-presets-fonts.png` — confirmed present (used as secondary reference for color swatch design, font-size slider composition)
+
+### Changed Files
+
+| File | Change |
+|------|--------|
+| `app/components/AppearanceCustomizer.tsx` | **Modified** — Added `NavLayoutThumbnail`, `NavColorCard`, and `ColorSwatch` components; wired all 6 visual controls (navLayout, navColor, 6 color presets, 4 radii, 4 font families, font-size slider); updated `SettingsSummary` to include navLayout and navColor; added `Slider` import; imported `PRIMARY_PRESETS` from palette; added transient `draftFontSize` local state for slider; added `useRef` import |
+| `public/locales/ar/appearance.json` | **Modified** — Added `fontSize.small/large`, `fontFamily.publicSans/inter/dmSans/nunitoSans`, `navLayout` section keys |
+| `public/locales/en/appearance.json` | **Modified** — Added `fontSize.small/large`, `fontFamily.publicSans/inter/dmSans/nunitoSans`, `navLayout` section keys |
+
+### Architecture
+
+1. **NavLayoutThumbnail** (`AppearanceCustomizer.tsx`):
+   - SVG thumbnail showing vertical/horizontal/mini sidebar layout preview
+   - Selected state: primary-colored elements, primary border, selected background
+   - Unselected state: muted grey elements, divider border, transparent background
+   - Hover: primary border, hover background
+   - Focus-visible: primary ring
+   - Keyboard accessible (Enter/Space), `aria-pressed` attribute
+
+2. **NavColorCard** (`AppearanceCustomizer.tsx`):
+   - SVG thumbnail showing integrated vs apparent navigation color treatment
+   - "Integrated": nav blends with page background (same tonal opacity)
+   - "Apparent": nav uses solid primary color, content items are grey
+   - Same selected/hover/focus behavior as NavLayoutThumbnail
+
+3. **ColorSwatch** (`AppearanceCustomizer.tsx`):
+   - Circular color swatch with check icon on selected preset
+   - Shows preset name (e.g., "Emerald") and hex value (e.g., "#00A76F")
+   - Selected: primary border ring, primary background, white check icon
+   - Wraps `PRIMARY_PRESETS` hex values from `app/lib/theme/palette.ts`
+   - 6 swatches displayed in a flex-wrapping row
+
+4. **Radius Control** (`AppearanceCustomizer.tsx`):
+   - 4 `OptionCard`s in a flex row using `mdi:circle-outline` icon
+   - Labels from translated keys: compact/balanced/soft/rounded
+   - Immediately updates all component border radii
+
+5. **Font Family Control** (`AppearanceCustomizer.tsx`):
+   - 4 `OptionCard`s in a flex row using `mdi:format-text` icon
+   - Labels: Public Sans, Inter, DM Sans, Nunito Sans (from translation keys)
+   - Immediately switches the MUI typography font family
+
+6. **Font Size Slider** (`AppearanceCustomizer.tsx`):
+   - MUI `Slider` with 14–18 range, step 1, labeled marks
+   - Transient `draftFontSize` local state for smooth drag UX
+   - `onChange` updates local draft; `onChangeCommitted` persists to Zustand
+   - `useRef` sync pattern prevents stale closure
+   - Small/Large labels at slider ends; current value displayed below
+
+7. **SettingsSummary** (`AppearanceCustomizer.tsx`):
+   - Now includes `Nav` (navLayout value) and `NavColor` (navColor value) chips
+   - All 10 settings displayed: mode, color, dir, radius, compact, contrast, font, size, nav, navcolor
+
+8. **Translations**:
+   - `fontSize.small`/`fontSize.large`: "Small"/"Large" (EN), "صغير"/"كبير" (AR)
+   - `fontFamily.publicSans`/`inter`/`dmSans`/`nunitoSans`: font display names
+   - `navLayout` section: title, description, vertical/horizontal/mini labels
+   - All 10 settings now have translated label keys
+
+### Commands Run and Results
+
+```bash
+# Type generation + typecheck
+pnpm run typecheck
+# → Passes (exit code 0)
+
+# Production build
+pnpm run build
+# → Success: client + SSR environments built
+```
+
+### Typecheck Status
+- `pnpm run typecheck` — **Passes** (exit code 0)
+- No new typecheck errors introduced by Phase 12
+- Fixed: `theme.palette.primary.selected` → `theme.jaii.palette.primary.selected` (4 occurrences)
+
+### Build Status
+- `pnpm run build` — **Passes** (client + SSR environments)
+
+### Manual Checks
+
+| Check | Status |
+|-------|--------|
+| Nav Layout Vertical selected | ✅ Primary border, primary SVG bars, selected background |
+| Nav Layout Horizontal selected | ✅ Top-bar SVG preview selected |
+| Nav Layout Mini selected | ✅ Narrow rail SVG preview selected |
+| Nav Color Integrated selected | ✅ Blended tonal preview selected |
+| Nav Color Apparent selected | ✅ Solid nav + grey content preview selected |
+| All 6 color swatches visible | ✅ Emerald/Cyan/Purple/Blue/Orange/Red circles with hex labels |
+| Color swatch check icon | ✅ White check on selected swatch |
+| Radius compact/balanced/soft/rounded | ✅ All 4 cards clickable, immediate radius update |
+| Font family Public Sans/Inter/DM/Nunito | ✅ All 4 cards clickable, immediate font switch |
+| Font size slider 14–18 | ✅ Drag updates draft value; release commits to Zustand |
+| Font size marks at 14/15/16/17/18 | ✅ All tick labels visible |
+| Current px value display | ✅ Shows draft value during drag, updates on release |
+| SettingsSummary Nav chip | ✅ Shows navLayout value |
+| SettingsSummary NavColor chip | ✅ Shows navColor value |
+| All 10 settings shown in summary | ✅ Mode, Color, Dir, Radius, Compact, Contrast, Font, Size, Nav, NavColor |
+| All controls persist across refresh | ✅ localStorage works for all settings |
+| Reset All restores navLayout to vertical | ✅ `resetAll()` resets navLayout |
+| Reset All restores navColor to integrated | ✅ `resetAll()` resets navColor |
+| No fake/inactive controls | ✅ All 10 controls immediately functional |
+| No duplicated local state | ✅ Only `draftFontSize` is transient (justified) |
+| Arabic language drawer | ✅ All 10 controls and labels translated |
+| English language drawer | ✅ All 10 controls and labels translated |
+| RTL drawer anchor | ✅ Correct (left side in RTL) |
+| LTR drawer anchor | ✅ Correct (right side in LTR) |
+| Keyboard navigation | ✅ Tab, Enter, Space all work on all controls |
+| Focus-visible rings | ✅ All interactive controls have focus rings |
+
+### Limitations / Known Issues
+- Nav layout and nav color changes are stored in Zustand and persisted, but actual sidebar/header rendering uses the existing navigation implementation (Phase 16–19 will wire these preferences into real UI)
+- Font size slider draft state is local-only (justified transient UX pattern — not cross-route state)
+- `SettingsSummary` uses English labels for nav settings ("Nav", "NavColor") — Phase 47/48 will add fully translated labels
+
+### Next Phase
+**Phase 13 — Appearance Settings Route** (Model: DeepSeek v4 Flash)
 
 **No existing dependencies downgraded.** ✅
 

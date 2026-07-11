@@ -1,4 +1,4 @@
-import { forwardRef, useRef } from "react";
+import { forwardRef, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -9,6 +9,7 @@ import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import Switch from "@mui/material/Switch";
+import Slider from "@mui/material/Slider";
 import { useTheme } from "@mui/material/styles";
 import { Icon } from "@iconify/react";
 import {
@@ -16,7 +17,13 @@ import {
   resolveDirection,
   type Mode,
   type DirectionKey,
+  type NavLayoutKey,
+  type NavColorKey,
+  type PrimaryPresetKey,
+  type RadiusKey,
+  type FontFamilyKey,
 } from "../stores/settings";
+import { PRIMARY_PRESETS } from "../lib/theme/palette";
 
 // =============================================================================
 // Types
@@ -95,6 +102,320 @@ function OptionCard({ icon, label, selected, onClick }: OptionCardProps) {
 }
 
 // =============================================================================
+// Navigation Layout Thumbnail
+// =============================================================================
+
+function NavLayoutThumbnail({
+  layout,
+  selected,
+  onClick,
+  label,
+}: {
+  layout: NavLayoutKey;
+  selected: boolean;
+  onClick: () => void;
+  label: string;
+}) {
+  const theme = useTheme();
+  const primary = theme.palette.primary.main;
+  const border = selected ? primary : theme.palette.divider;
+  const bg = selected ? theme.jaii.palette.primary.selected : "transparent";
+
+  return (
+    <Box
+      component="button"
+      onClick={onClick}
+      onKeyDown={(e: React.KeyboardEvent) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      aria-pressed={selected}
+      tabIndex={0}
+      sx={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 0.5,
+        py: 1,
+        px: 0.5,
+        border: 1,
+        borderRadius: 1.5,
+        cursor: "pointer",
+        minWidth: 0,
+        backgroundColor: bg,
+        borderColor: border,
+        outline: "none",
+        transition: "background-color 0.15s, border-color 0.15s",
+        "&:hover": {
+          borderColor: primary,
+          backgroundColor: selected ? bg : theme.palette.action.hover,
+        },
+        "&:focus-visible": {
+          boxShadow: `0 0 0 2px ${primary}`,
+        },
+      }}
+    >
+      {/* SVG thumbnail */}
+      <svg
+        width="48"
+        height="32"
+        viewBox="0 0 48 32"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ display: "block" }}
+      >
+        {layout === "vertical" && (
+          <>
+            <rect x="2" y="2" width="10" height="28" rx="2" fill={selected ? primary : "#919EAB"} fillOpacity={selected ? 0.9 : 0.4} />
+            <rect x="15" y="6" width="31" height="3" rx="1.5" fill={selected ? primary : "#919EAB"} fillOpacity={selected ? 0.6 : 0.3} />
+            <rect x="15" y="11" width="22" height="3" rx="1.5" fill={selected ? primary : "#919EAB"} fillOpacity={selected ? 0.6 : 0.3} />
+            <rect x="15" y="16" width="26" height="3" rx="1.5" fill={selected ? primary : "#919EAB"} fillOpacity={selected ? 0.6 : 0.3} />
+            <rect x="15" y="21" width="18" height="3" rx="1.5" fill={selected ? primary : "#919EAB"} fillOpacity={selected ? 0.6 : 0.3} />
+          </>
+        )}
+        {layout === "horizontal" && (
+          <>
+            <rect x="2" y="2" width="44" height="8" rx="2" fill={selected ? primary : "#919EAB"} fillOpacity={selected ? 0.9 : 0.4} />
+            <rect x="6" y="13" width="36" height="3" rx="1.5" fill={selected ? primary : "#919EAB"} fillOpacity={selected ? 0.6 : 0.3} />
+            <rect x="6" y="18" width="28" height="3" rx="1.5" fill={selected ? primary : "#919EAB"} fillOpacity={selected ? 0.6 : 0.3} />
+            <rect x="6" y="23" width="32" height="3" rx="1.5" fill={selected ? primary : "#919EAB"} fillOpacity={selected ? 0.6 : 0.3} />
+          </>
+        )}
+        {layout === "mini" && (
+          <>
+            <rect x="2" y="2" width="5" height="28" rx="2" fill={selected ? primary : "#919EAB"} fillOpacity={selected ? 0.9 : 0.4} />
+            <rect x="10" y="6" width="36" height="3" rx="1.5" fill={selected ? primary : "#919EAB"} fillOpacity={selected ? 0.6 : 0.3} />
+            <rect x="10" y="11" width="26" height="3" rx="1.5" fill={selected ? primary : "#919EAB"} fillOpacity={selected ? 0.6 : 0.3} />
+            <rect x="10" y="16" width="30" height="3" rx="1.5" fill={selected ? primary : "#919EAB"} fillOpacity={selected ? 0.6 : 0.3} />
+            <rect x="10" y="21" width="20" height="3" rx="1.5" fill={selected ? primary : "#919EAB"} fillOpacity={selected ? 0.6 : 0.3} />
+          </>
+        )}
+      </svg>
+      <Typography
+        variant="caption"
+        sx={{
+          fontWeight: selected ? 600 : 500,
+          fontSize: "10px",
+          lineHeight: 1.2,
+          textAlign: "center",
+          color: selected ? "primary.main" : "text.secondary",
+        }}
+      >
+        {label}
+      </Typography>
+    </Box>
+  );
+}
+
+// =============================================================================
+// Navigation Color Card
+// =============================================================================
+
+function NavColorCard({
+  colorMode,
+  selected,
+  onClick,
+  label,
+}: {
+  colorMode: NavColorKey;
+  selected: boolean;
+  onClick: () => void;
+  label: string;
+}) {
+  const theme = useTheme();
+  const primary = theme.palette.primary.main;
+  const border = selected ? primary : theme.palette.divider;
+  const bg = selected ? theme.jaii.palette.primary.selected : "transparent";
+
+  return (
+    <Box
+      component="button"
+      onClick={onClick}
+      onKeyDown={(e: React.KeyboardEvent) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      aria-pressed={selected}
+      tabIndex={0}
+      sx={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 0.5,
+        py: 1,
+        px: 0.5,
+        border: 1,
+        borderRadius: 1.5,
+        cursor: "pointer",
+        minWidth: 0,
+        backgroundColor: bg,
+        borderColor: border,
+        outline: "none",
+        transition: "background-color 0.15s, border-color 0.15s",
+        "&:hover": {
+          borderColor: primary,
+          backgroundColor: selected ? bg : theme.palette.action.hover,
+        },
+        "&:focus-visible": {
+          boxShadow: `0 0 0 2px ${primary}`,
+        },
+      }}
+    >
+      {/* SVG thumbnail */}
+      <svg
+        width="48"
+        height="24"
+        viewBox="0 0 48 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ display: "block" }}
+      >
+        {colorMode === "integrated" && (
+          <>
+            <rect x="2" y="2" width="10" height="20" rx="2" fill={selected ? primary : "#919EAB"} fillOpacity={selected ? 0.9 : 0.4} />
+            <rect x="15" y="6" width="31" height="3" rx="1.5" fill={selected ? primary : "#919EAB"} fillOpacity={selected ? 0.5 : 0.25} />
+            <rect x="15" y="11" width="22" height="3" rx="1.5" fill={selected ? primary : "#919EAB"} fillOpacity={selected ? 0.5 : 0.25} />
+            <rect x="15" y="16" width="26" height="3" rx="1.5" fill={selected ? primary : "#919EAB"} fillOpacity={selected ? 0.5 : 0.25} />
+          </>
+        )}
+        {colorMode === "apparent" && (
+          <>
+            <rect x="2" y="2" width="10" height="20" rx="2" fill={selected ? primary : "#919EAB"} fillOpacity={selected ? 1 : 0.6} />
+            <rect x="15" y="6" width="31" height="3" rx="1.5" fill="#919EAB" fillOpacity={0.3} />
+            <rect x="15" y="11" width="22" height="3" rx="1.5" fill="#919EAB" fillOpacity={0.3} />
+            <rect x="15" y="16" width="26" height="3" rx="1.5" fill="#919EAB" fillOpacity={0.3} />
+          </>
+        )}
+      </svg>
+      <Typography
+        variant="caption"
+        sx={{
+          fontWeight: selected ? 600 : 500,
+          fontSize: "10px",
+          lineHeight: 1.2,
+          textAlign: "center",
+          color: selected ? "primary.main" : "text.secondary",
+        }}
+      >
+        {label}
+      </Typography>
+    </Box>
+  );
+}
+
+// =============================================================================
+// Color Swatch — labeled color swatch with hex
+// =============================================================================
+
+function ColorSwatch({
+  preset,
+  hex,
+  label,
+  selected,
+  onClick,
+}: {
+  preset: PrimaryPresetKey;
+  hex: string;
+  label: string;
+  selected: boolean;
+  onClick: () => void;
+}) {
+  const theme = useTheme();
+  const primary = theme.palette.primary.main;
+
+  return (
+    <Box
+      component="button"
+      onClick={onClick}
+      onKeyDown={(e: React.KeyboardEvent) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      aria-pressed={selected}
+      tabIndex={0}
+      sx={{
+        flex: "0 0 auto",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 0.5,
+        p: 0,
+        border: 1,
+        borderRadius: 1.5,
+        cursor: "pointer",
+        minWidth: 0,
+        backgroundColor: selected ? theme.jaii.palette.primary.selected : "transparent",
+        borderColor: selected ? primary : theme.palette.divider,
+        outline: "none",
+        transition: "background-color 0.15s, border-color 0.15s",
+        // "&:hover": {
+        //   borderColor: primary,
+        //   backgroundColor: selected ? theme.jaii.palette.primary.selected : theme.palette.action.hover,
+        // },
+        "&:focus-visible": {
+          boxShadow: `0 0 0 2px ${primary}`,
+        },
+      }}
+    >
+      <Box
+        sx={{
+          width: 28,
+          height: 28,
+          borderRadius: "50%",
+          backgroundColor: hex,
+          border: `2px solid ${selected ? primary : "transparent"}`,
+          boxShadow: selected ? `0 0 0 2px ${theme.palette.background.paper}` : "none",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          transition: "border-color 0.15s",
+        }}
+      >
+        {selected && (
+          <Icon icon="mdi:check" width={14} height={14} color="#fff" />
+        )}
+      </Box>
+      {/* <Typography
+        variant="caption"
+        sx={{
+          fontWeight: selected ? 600 : 400,
+          fontSize: "9px",
+          lineHeight: 1.2,
+          textAlign: "center",
+          color: selected ? "primary.main" : "text.secondary",
+          maxWidth: 52,
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {label}
+      </Typography>
+      <Typography
+        variant="caption"
+        sx={{
+          fontSize: "8px",
+          lineHeight: 1,
+          textAlign: "center",
+          color: "text.disabled",
+          fontFamily: "monospace",
+        }}
+      >
+        {hex}
+      </Typography> */}
+    </Box>
+  );
+}
+
+// =============================================================================
 // Section Label
 // =============================================================================
 
@@ -167,8 +488,7 @@ function SettingRow({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "primary.main",
-          opacity: 0.1,
+          backgroundColor: theme => theme.lighten(theme.palette.primary.main, 0.6),
           flexShrink: 0,
           mt: 0.25,
         }}
@@ -177,7 +497,7 @@ function SettingRow({
           icon={icon}
           width={16}
           height={16}
-          style={{ opacity: 0.7, position: "relative" }}
+          style={{ position: "relative", color: "#000000" }}
         />
       </Box>
       <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -216,6 +536,8 @@ function SettingsSummary() {
   const direction = useSettingsStore((s) => s.direction);
   const fontFamily = useSettingsStore((s) => s.fontFamily);
   const fontSize = useSettingsStore((s) => s.fontSize);
+  const navLayout = useSettingsStore((s) => s.navLayout);
+  const navColor = useSettingsStore((s) => s.navColor);
 
   const items = [
     { label: "Mode", value: mode },
@@ -226,6 +548,8 @@ function SettingsSummary() {
     { label: "Contrast", value: contrast },
     { label: "Font", value: fontFamily },
     { label: "Size", value: `${fontSize}px` },
+    { label: "Nav", value: navLayout },
+    { label: "NavColor", value: navColor },
   ];
 
   return (
@@ -303,6 +627,61 @@ function DrawerContent() {
   const contrast = useSettingsStore((s) => s.contrast);
   const setContrast = useSettingsStore((s) => s.setContrast);
 
+  // ── Nav Layout ──
+  const navLayout = useSettingsStore((s) => s.navLayout);
+  const setNavLayout = useSettingsStore((s) => s.setNavLayout);
+
+  // ── Nav Color ──
+  const navColor = useSettingsStore((s) => s.navColor);
+  const setNavColor = useSettingsStore((s) => s.setNavColor);
+
+  // ── Primary Preset ──
+  const primaryPreset = useSettingsStore((s) => s.primaryPreset);
+  const setPrimaryPreset = useSettingsStore((s) => s.setPrimaryPreset);
+
+  // ── Radius ──
+  const radius = useSettingsStore((s) => s.radius);
+  const setRadius = useSettingsStore((s) => s.setRadius);
+
+  // ── Font Family ──
+  const fontFamily = useSettingsStore((s) => s.fontFamily);
+  const setFontFamily = useSettingsStore((s) => s.setFontFamily);
+
+  // ── Font Size (transient draft state) ──
+  const fontSize = useSettingsStore((s) => s.fontSize);
+  const setFontSize = useSettingsStore((s) => s.setFontSize);
+  const [draftFontSize, setDraftFontSize] = useState(fontSize);
+
+  // Sync draft when store changes externally
+  const prevFontSizeRef = useRef(fontSize);
+  if (prevFontSizeRef.current !== fontSize) {
+    prevFontSizeRef.current = fontSize;
+    setDraftFontSize(fontSize);
+  }
+
+  const presetEntries: Array<{ key: PrimaryPresetKey; hex: string }> = [
+    { key: "emerald", hex: PRIMARY_PRESETS.emerald.main },
+    { key: "cyan", hex: PRIMARY_PRESETS.cyan.main },
+    { key: "purple", hex: PRIMARY_PRESETS.purple.main },
+    { key: "blue", hex: PRIMARY_PRESETS.blue.main },
+    { key: "orange", hex: PRIMARY_PRESETS.orange.main },
+    { key: "red", hex: PRIMARY_PRESETS.red.main },
+  ];
+
+  const radiusEntries: Array<{ key: RadiusKey; label: string }> = [
+    { key: "compact", label: t("radius.compact") },
+    { key: "balanced", label: t("radius.balanced") },
+    { key: "soft", label: t("radius.soft") },
+    { key: "rounded", label: t("radius.rounded") },
+  ];
+
+  const fontEntries: Array<{ key: FontFamilyKey; labelKey: string }> = [
+    { key: "public-sans", labelKey: "fontFamily.publicSans" },
+    { key: "inter", labelKey: "fontFamily.inter" },
+    { key: "dm-sans", labelKey: "fontFamily.dmSans" },
+    { key: "nunito-sans", labelKey: "fontFamily.nunitoSans" },
+  ];
+
   return (
     <Box
       sx={{
@@ -375,7 +754,20 @@ function DrawerContent() {
           icon="mdi:palette-outline"
           label={t("color.title")}
           description={t("color.description")}
-        />
+        >
+          <Box sx={{ display: "flex", gap: 0.75, flexWrap: "wrap" }}>
+            {presetEntries.map(({ key, hex }) => (
+              <ColorSwatch
+                key={key}
+                preset={key}
+                hex={hex}
+                label={t(`color.${key}`)}
+                selected={primaryPreset === key}
+                onClick={() => setPrimaryPreset(key)}
+              />
+            ))}
+          </Box>
+        </SettingRow>
 
         <Divider sx={{ mx: 2, my: 0.5 }} />
 
@@ -407,10 +799,58 @@ function DrawerContent() {
         </SettingRow>
 
         <SettingRow
+          icon="mdi:view-dashboard-outline"
+          label={t("navLayout.title")}
+          description={t("navLayout.description")}
+        >
+          <Box sx={{ display: "flex", gap: 1 }}>
+            {(["vertical", "horizontal", "mini"] as NavLayoutKey[]).map((l) => (
+              <NavLayoutThumbnail
+                key={l}
+                layout={l}
+                label={t(`navLayout.${l}`)}
+                selected={navLayout === l}
+                onClick={() => setNavLayout(l)}
+              />
+            ))}
+          </Box>
+        </SettingRow>
+
+        <SettingRow
+          icon="mdi:palette-swatch-outline"
+          label={t("navColor.title")}
+          description={t("navColor.description")}
+        >
+          <Box sx={{ display: "flex", gap: 1 }}>
+            {(["integrated", "apparent"] as NavColorKey[]).map((c) => (
+              <NavColorCard
+                key={c}
+                colorMode={c}
+                label={t(`navColor.${c}`)}
+                selected={navColor === c}
+                onClick={() => setNavColor(c)}
+              />
+            ))}
+          </Box>
+        </SettingRow>
+
+        <SettingRow
           icon="mdi:border-radius"
           label={t("radius.title")}
           description={t("radius.description")}
-        />
+        >
+          <Box sx={{ display: "flex", gap: 1 }}>
+            {radiusEntries.map(({ key, label }) => (
+              <OptionCard
+                key={key}
+                icon="mdi:circle-outline"
+                label={label}
+                selected={radius === key}
+                onClick={() => setRadius(key)}
+              />
+            ))}
+          </Box>
+        </SettingRow>
 
         <SettingRow
           icon="mdi:arrow-collapse-vertical"
@@ -487,13 +927,75 @@ function DrawerContent() {
           icon="mdi:format-font"
           label={t("fontFamily.title")}
           description={t("fontFamily.description")}
-        />
+        >
+          <Box sx={{ display: "flex", gap: 1 }}>
+            {fontEntries.map(({ key, labelKey }) => (
+              <OptionCard
+                key={key}
+                icon="mdi:format-text"
+                label={t(labelKey)}
+                selected={fontFamily === key}
+                onClick={() => setFontFamily(key)}
+              />
+            ))}
+          </Box>
+        </SettingRow>
 
         <SettingRow
           icon="mdi:format-size"
           label={t("fontSize.title")}
           description={t("fontSize.description")}
-        />
+        >
+          <Box sx={{ px: 0.5 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+              <Typography
+                variant="caption"
+                sx={{ fontWeight: 500, color: "text.secondary", minWidth: 36 }}
+              >
+                {t("fontSize.small")}
+              </Typography>
+              <Slider
+                value={draftFontSize}
+                min={14}
+                max={18}
+                step={1}
+                marks={[
+                  { value: 14, label: "14" },
+                  { value: 15, label: "15" },
+                  { value: 16, label: "16" },
+                  { value: 17, label: "17" },
+                  { value: 18, label: "18" },
+                ]}
+                onChange={(_, val) => setDraftFontSize(val as number)}
+                onChangeCommitted={(_, val) => setFontSize(val as number)}
+                size="small"
+                sx={{ flex: 1 }}
+                slotProps={{
+                  mark: { sx: { fontSize: "9px" } },
+                }}
+              />
+              <Typography
+                variant="caption"
+                sx={{ fontWeight: 500, color: "text.secondary", minWidth: 36 }}
+              >
+                {t("fontSize.large")}
+              </Typography>
+            </Box>
+            <Typography
+              variant="caption"
+              sx={{
+                display: "block",
+                textAlign: "center",
+                mt: 0.5,
+                fontWeight: 600,
+                color: "primary.main",
+                fontSize: "12px",
+              }}
+            >
+              {draftFontSize}px
+            </Typography>
+          </Box>
+        </SettingRow>
 
         {/* Current settings summary */}
         <Divider sx={{ mx: 2, my: 0.5 }} />
@@ -608,7 +1110,7 @@ CustomizerFab.displayName = "CustomizerFab";
 // - A responsive MUI Drawer anchored to the logical start edge (right in RTL, left in LTR)
 //
 // Controls (Phase 11): Mode, Direction, Contrast, Compact
-// Controls (Phase 12): Color presets, Radius, Font Family, Font Size
+// Controls (Phase 12): Nav Layout, Nav Color, Color Presets, Radius, Font Family, Font Size
 //
 // State (open/close) and all settings are owned by the Zustand settings store.
 // No custom Context is created.
