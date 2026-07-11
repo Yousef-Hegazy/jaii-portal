@@ -60,7 +60,9 @@
   },
   "fontSize": {
     "title": "Font Size",
-    "description": "Adjust the base text size"
+    "description": "Adjust the base text size",
+    "small": "Small",
+    "large": "Large"
   },
   "navLayout": {
     "title": "Navigation Layout",
@@ -83,5 +85,37 @@
     "layout": "Layout",
     "typography": "Typography",
     "currentSettings": "Current Settings"
+  },
+  "preview": {
+    "title": "Live Preview",
+    "cardTitle": "Al-Nadwa Laundry",
+    "cardSubtitle": "Premium laundry & dry cleaning services",
+    "viewDetails": "View Details",
+    "totalOrders": "Total Orders",
+    "revenue": "Revenue",
+    "sampleForm": "Sample Form",
+    "fullName": "Full Name",
+    "email": "Email",
+    "notifyByEmail": "Notify by email",
+    "statusChips": "Status Chips",
+    "chipActive": "Active",
+    "chipPending": "Pending",
+    "chipCancelled": "Cancelled",
+    "chipInfo": "Info",
+    "chipPrimary": "Primary",
+    "chipDefault": "Default",
+    "navigationSample": "Navigation Sample",
+    "navDashboard": "Dashboard",
+    "navOrders": "Orders",
+    "navCustomers": "Customers",
+    "navAnalytics": "Analytics",
+    "chartTitle": "Weekly Orders",
+    "chartMon": "Mon",
+    "chartTue": "Tue",
+    "chartWed": "Wed",
+    "chartThu": "Thu",
+    "chartFri": "Fri",
+    "chartSat": "Sat",
+    "chartSun": "Sun"
   }
 }

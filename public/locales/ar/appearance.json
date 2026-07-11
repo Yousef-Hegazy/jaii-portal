@@ -60,7 +60,9 @@
   },
   "fontSize": {
     "title": "حجم الخط",
-    "description": "اضبط حجم النص الأساسي"
+    "description": "اضبط حجم النص الأساسي",
+    "small": "صغير",
+    "large": "كبير"
   },
   "navLayout": {
     "title": "تخطيط التنقل",
@@ -83,5 +85,37 @@
     "layout": "التخطيط",
     "typography": "الطباعة",
     "currentSettings": "الحالة الحالية"
+  },
+  "preview": {
+    "title": "معاينة حية",
+    "cardTitle": "مغسلة الندوة",
+    "cardSubtitle": "خدمات الغسيل والتنظيف الجاف الفاخرة",
+    "viewDetails": "عرض التفاصيل",
+    "totalOrders": "إجمالي الطلبات",
+    "revenue": "الإيرادات",
+    "sampleForm": "نموذج تجريبي",
+    "fullName": "الاسم الكامل",
+    "email": "البريد الإلكتروني",
+    "notifyByEmail": "الإشعار عبر البريد",
+    "statusChips": "علامات الحالة",
+    "chipActive": "نشط",
+    "chipPending": "قيد الانتظار",
+    "chipCancelled": "ملغي",
+    "chipInfo": "معلومات",
+    "chipPrimary": "أساسي",
+    "chipDefault": "افتراضي",
+    "navigationSample": "نموذج التنقل",
+    "navDashboard": "لوحة التحكم",
+    "navOrders": "الطلبات",
+    "navCustomers": "العملاء",
+    "navAnalytics": "التحليلات",
+    "chartTitle": "الطلبات الأسبوعية",
+    "chartMon": "الاثنين",
+    "chartTue": "الثلاثاء",
+    "chartWed": "الأربعاء",
+    "chartThu": "الخميس",
+    "chartFri": "الجمعة",
+    "chartSat": "السبت",
+    "chartSun": "الأحد"
   }
 }

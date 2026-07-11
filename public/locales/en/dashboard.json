@@ -16,5 +16,25 @@
   "recentOrders": "Recent Orders",
   "topCustomers": "Top Customers",
   "revenueChart": "Revenue Chart",
-  "ordersChart": "Orders Chart"
+  "ordersChart": "Orders Chart",
+  "brand": {
+    "name": "Jaii",
+    "subtitle": "Laundry Platform"
+  },
+  "nav": {
+    "placeholder": "Navigation",
+    "item1": "Dashboard",
+    "item2": "Orders",
+    "item3": "Customers",
+    "item4": "Settings"
+  },
+  "user": {
+    "name": "Demo User",
+    "role": "Laundry Manager"
+  },
+  "header": {
+    "title": "Dashboard",
+    "settings": "Settings"
+  },
+  "skipLink": "Skip to content"
 }

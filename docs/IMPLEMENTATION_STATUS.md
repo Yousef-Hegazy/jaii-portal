@@ -14,7 +14,9 @@
 **Phase 10 — Floating Settings Trigger + Drawer Shell** ✅ Complete
 **Phase 11 — Customizer Core Controls** ✅ Complete
 **Phase 12 — Customizer Visual Controls** ✅ Complete
-**Next:** Phase 13 — Appearance Settings Route
+**Phase 14 — Route Map + Placeholder Hierarchy** ✅ Complete
+**Phase 15 — Dashboard Frame** ✅ Complete
+**Next:** Phase 16 — Expanded Vertical Navigation
 
 ---
 
@@ -39,8 +41,8 @@
 | 11 | Customizer core controls | ✅ **Done** | DeepSeek v4 Flash | Mode option cards, direction option cards (auto/ltr/rtl), contrast switch row, compact switch row; all wired to Zustand with persistence | All 4 controls work immediately, persist, usable in RTL; temporary proof-page controls removed |
 | 12 | Customizer visual controls | ✅ **Done** | MiniMax M2.7 | Nav layout (3), nav color (2), 6 color presets, 4 radii, 4 font families, font size slider, visual thumbnails/swatches | Complete customizer visually impressive; every option changes proof UI |
 | 13 | Appearance settings route | ⬜ Pending | DeepSeek v4 Flash | `/dashboard/settings/appearance` reusing drawer controls + larger live preview | Direct URL works; drawer/page synchronized |
-| 14 | Route map + placeholder hierarchy | ⬜ Pending | DeepSeek v4 Flash | 17 explicit routes registered with Outlet, minimal MUI placeholders | Every URL opens directly; no route mismatch |
-| 15 | Dashboard frame | ⬜ Pending | MiniMax M2.7 | Nav/header/content regions, responsive gutters, surface hierarchy, skip link, route outlet | Placeholder pages feel like commercial dashboard |
+| 14 | Route map + placeholder hierarchy | ✅ **Done** | DeepSeek v4 Flash | 17 explicit routes registered with Outlet, minimal MUI placeholders | Every URL opens directly; no route mismatch |
+| 15 | Dashboard frame | ✅ **Done** | MiniMax M2.7 | Nav/header/content regions, responsive gutters, surface hierarchy, skip link, route outlet | Placeholder pages feel like commercial dashboard |
 | 16 | Expanded vertical navigation | ⬜ Pending | MiniMax M2.7 | Logo placeholder, translated grouped links, icons, active states, nested groups, user/footer, integrated/apparent color modes, RTL/LTR correct side, independent scroll | All links work; Arabic labels fit; both nav color modes premium |
 | 17 | Mini navigation mode | ⬜ Pending | MiniMax M2.7 | Stable icon rail, accessible tooltips, active marker, nested flyout, Zustand-owned sidebar preference, reduced-motion-safe transition, Ctrl/Cmd+B | Vertical ↔ mini polished, persistent, works RTL/LTR |
 | 18 | Horizontal navigation mode | ⬜ Pending | MiniMax M2.7 | Horizontal nav below header, same config/permissions, grouped menus, active state, overflow-safe, integrated/apparent, RTL ordering | All 3 nav options work via customizer without route loss |
@@ -1133,8 +1135,133 @@ pnpm run build
 - Font size slider draft state is local-only (justified transient UX pattern — not cross-route state)
 - `SettingsSummary` uses English labels for nav settings ("Nav", "NavColor") — Phase 47/48 will add fully translated labels
 
-### Next Phase
-**Phase 13 — Appearance Settings Route** (Model: DeepSeek v4 Flash)
+## Phase 13 — Appearance Settings Route Results
+
+### Reference Images Inspected
+
+- `docs/references/theme-customizer-overview.png` — confirmed present (used as reference for settings-card hierarchy, control presentation, section layout)
+- `docs/references/theme-customizer-presets-fonts.png` — confirmed present (used as secondary reference for control density and typography rhythm)
+
+### Changed Files
+
+| File | Change |
+|------|--------|
+| `app/components/SettingsControls.tsx` | **Created** — Shared settings control components extracted from `AppearanceCustomizer` (OptionCard, NavLayoutThumbnail, NavColorCard, ColorSwatch, SectionLabel, SettingRow, SettingsSummary, ResetButton, SettingsControls). All components read/write directly to the Zustand settings store. Used by both the floating drawer and the full-page route. |
+| `app/components/AppearanceCustomizer.tsx` | **Refactored** — Drawer shell now imports all control components from `SettingsControls.tsx`. DrawerContent wraps shared `SettingsControls` + drawer-specific header/footer. No duplicate preference logic. |
+| `app/routes.ts` | **Modified** — Added `/dashboard` route layout with child route `/dashboard/settings/appearance` |
+| `app/routes/dashboard/layout.tsx` | **Created** — Minimal dashboard layout that renders `<Outlet />` for child routes |
+| `app/routes/dashboard/settings/appearance.tsx` | **Created** — Full-page appearance settings route with two-column layout (controls + live preview). Preview includes: sample card with KPI stats, sample form with TextField/Switch, status chips (6 variants), navigation sample with active state, and weekly orders chart placeholder with theme-colored gradient bars. Page uses shared `SettingsControls` + `ResetButton` from `SettingsControls.tsx`. |
+| `public/locales/en/appearance.json` | **Modified** — Added `preview` section with 20+ English translation keys (card, form, chips, nav, chart) |
+| `public/locales/ar/appearance.json` | **Modified** — Added `preview` section with 20+ Arabic translation keys (card, form, chips, nav, chart) |
+
+### Architecture
+
+1. **Shared Settings Controls** (`app/components/SettingsControls.tsx`):
+   - Default export: `SettingsControls` — renders the complete control panel (Appearance, Layout, Typography sections) without any drawer wrapper
+   - Named exports: `OptionCard`, `NavLayoutThumbnail`, `NavColorCard`, `ColorSwatch`, `SectionLabel`, `SettingRow`, `SettingsSummary`, `ResetButton`
+   - All components read/write directly to Zustand store via narrow selectors
+   - No duplicate preference logic, no new Context, no state mirroring
+
+2. **Appearance Customizer** (`app/components/AppearanceCustomizer.tsx`):
+   - Now a thin drawer shell: header (title + close), scrollable body with `<SettingsControls />`, and footer with `<ResetButton />`
+   - All control logic lives in `SettingsControls.tsx`
+   - FAB and Drawer layout unchanged
+
+3. **Dashboard Layout** (`app/routes/dashboard/layout.tsx`):
+   - Minimal layout with `<Outlet />` for child routes
+   - Full dashboard shell (nav, header) added in Phase 15
+
+4. **Appearance Settings Page** (`app/routes/dashboard/settings/appearance.tsx`):
+   - Two-column grid: `420px` controls panel (sticky, scrollable) + flexible preview area
+   - Controls panel is `<Paper variant="outlined">` wrapping `<SettingsControls />` + second `<ResetButton />`
+   - Live preview includes:
+     - **Sample Card**: Avatar, title/subtitle, "View Details" button, 2 KPI stat boxes (Total Orders, Revenue) with trend indicators
+     - **Sample Form**: 2 TextFields (name, email) + Switch (notify by email) with `FormControlLabel`
+     - **Status Chips**: 6 `Chip` variants (success, warning, error, info, primary outlined, default outlined)
+     - **Navigation Sample**: `List` with 4 items (Dashboard, Orders, Customers, Analytics), first item selected with primary accent border and background
+     - **Chart Placeholder**: 7 SVG bars with gradient colors from `theme.jaii.chart.series`, day labels, height proportional to mock values
+   - All preview text translated via `useTranslation("appearance")`
+   - Responsive: stacks on mobile (xs→sm), side-by-side on `lg+`
+
+5. **Route Registration** (`app/routes.ts`):
+   - `route("dashboard", "routes/dashboard/layout.tsx", [route("settings/appearance", ...)])`
+   - Direct URL `/dashboard/settings/appearance` returns HTTP 200
+   - Server-side rendered via React Router framework mode
+
+6. **Translations** (`public/locales/{ar,en}/appearance.json`):
+   - New `preview` section with keys: `title`, `cardTitle`, `cardSubtitle`, `viewDetails`, `totalOrders`, `revenue`, `sampleForm`, `fullName`, `email`, `notifyByEmail`, `statusChips`, `chipActive/Pending/Cancelled/Info/Primary/Default`, `navigationSample`, `navDashboard/Orders/Customers/Analytics`, `chartTitle`, `chartMon/Tue/Wed/Thu/Fri/Sat/Sun`
+
+### State Synchronization
+
+- Drawer and page share the exact same Zustand store — no synchronization code needed
+- Changing a setting in either the drawer or the page immediately updates both (live preview updates in real time)
+- `ResetButton` works identically in both contexts
+- Persistence via existing `localStorage` keys (unchanged from Phase 12)
+
+### Commands Run and Results
+
+```bash
+# Type generation + typecheck
+pnpm run typecheck
+# → Passes (exit code 0)
+
+# Production build
+pnpm run build
+# → Success: client + SSR environments built
+# New assets in build output:
+#   build/client/assets/layout-X0OxAiUM.js (0.13 kB)
+#   build/client/assets/appearance-DlZkQ6GR.js (13.71 kB)
+#   build/client/assets/SettingsControls-CdbDCHLk.js (199.20 kB)
+```
+
+### Typecheck Status
+- `pnpm run typecheck` — **Passes** (exit code 0)
+- No new typecheck errors introduced by Phase 13
+
+### Build Status
+- `pnpm run build` — **Passes** (client + SSR environments)
+- Layout and appearance route modules appear in both client and server build output
+
+### Manual Verification Checklist
+
+| Check | Status |
+|-------|--------|
+| `/dashboard/settings/appearance` returns HTTP 200 | ✅ Direct URL loads |
+| Page header shows "Appearance" with description | ✅ |
+| Controls panel (left column) uses same OptionCard/Swatch/SettingRow/SectionLabel as drawer | ✅ Shared `SettingsControls` component |
+| Mode Light/Dark/System option cards functional | ✅ |
+| Color swatches (6 presets) functional | ✅ |
+| Direction Auto/LTR/RTL option cards functional | ✅ |
+| Nav layout thumbnails (vertical/horizontal/mini) functional | ✅ |
+| Nav color cards (integrated/apparent) functional | ✅ |
+| Radius option cards (compact/balanced/soft/rounded) functional | ✅ |
+| Compact switch toggles | ✅ |
+| Contrast switch toggles | ✅ |
+| Font family option cards (4) functional | ✅ |
+| Font size slider 14–18 with marks | ✅ |
+| Reset button resets all settings to defaults | ✅ |
+| Live preview: Sample card renders with theme colors | ✅ Card uses primary Avatar + primary Button |
+| Live preview: Sample form with TextFields and Switch | ✅ |
+| Live preview: Status chips (6 variants) | ✅ success/warning/error/info/primary/default |
+| Live preview: Navigation sample with active state | ✅ Primary accent on Dashboard item |
+| Live preview: Chart placeholder with gradient bars | ✅ 7 bars using `theme.jaii.chart.series` colors |
+| Drawer FAB still works | ✅ FAB on home page, opens drawer with same controls |
+| Drawer controls and page controls synchronized | ✅ Same Zustand store — no sync code needed |
+| Arabic language | ✅ All controls and preview text translated |
+| English language | ✅ All controls and preview text translated |
+| RTL layout | ✅ Controls panel position, text alignment correct |
+| LTR layout | ✅ Controls panel position, text alignment correct |
+| Light mode | ✅ All preview components render correctly |
+| Dark mode | ✅ All preview components render correctly |
+| Responsive: stacks on mobile | ✅ Single column on xs/sm, two columns on lg+ |
+| Keyboard navigation | ✅ Tab, Enter, Space on all controls |
+| No custom Context created | ✅ Zustand is the sole source of state |
+| No duplicate preference logic | ✅ Shared `SettingsControls` component |
+
+### Limitations / Known Issues
+- Dashboard layout is minimal (`<Outlet />` only) — full dashboard shell (nav, header) comes in Phase 15
+- Chart placeholder uses SVG bars rather than ApexCharts (Phase 24)
+- `SettingsSummary` uses English labels for some settings — Phase 47/48 will add fully translated labels
 
 **No existing dependencies downgraded.** ✅
 
@@ -1339,5 +1466,233 @@ pnpm run build
 
 ### Next Phase
 **Phase 10 — Floating Settings Trigger + Drawer Shell** (Model: MiniMax M2.7)
+
+**No existing dependencies downgraded.** ✅
+
+---
+
+## Phase 14 — Route Map + Placeholder Hierarchy Results
+
+### Changed Files
+
+| File | Change |
+|------|--------|
+| `app/routes.ts` | **Modified** — Registered all 16 routes with path-bearing parents and `<Outlet />` |
+| `app/routes/login.tsx` | **Created** — Minimal login page placeholder |
+| `app/routes/dashboard/page.tsx` | **Created** — Minimal dashboard overview placeholder |
+| `app/routes/dashboard/orders.tsx` | **Created** — Minimal orders list placeholder |
+| `app/routes/dashboard/customers.tsx` | **Created** — Minimal customers list placeholder |
+| `app/routes/dashboard/analytics.tsx` | **Created** — Minimal analytics placeholder |
+| `app/routes/dashboard/partners.tsx` | **Created** — Minimal partners list placeholder |
+| `app/routes/dashboard/settings/layout.tsx` | **Created** — Settings layout with `<Outlet />` |
+| `app/routes/dashboard/settings/page.tsx` | **Created** — Minimal settings overview placeholder |
+| `app/routes/dashboard/settings/pricing.tsx` | **Created** — Minimal pricing settings placeholder |
+| `app/routes/dashboard/settings/zones.tsx` | **Created** — Minimal zones settings placeholder |
+| `app/routes/dashboard/settings/drivers.tsx` | **Created** -- Minimal drivers settings placeholder |
+| `app/routes/dashboard/showcase/layout.tsx` | **Created** — Showcase layout with `<Outlet />` |
+| `app/routes/dashboard/showcase/components.tsx` | **Created** — Minimal components showcase placeholder |
+| `app/routes/dashboard/showcase/charts.tsx` | **Created** — Minimal charts showcase placeholder |
+| `app/routes/dashboard/showcase/forms.tsx` | **Created** — Minimal forms showcase placeholder |
+| `app/routes/dashboard/showcase/tables.tsx` | **Created** — Minimal tables showcase placeholder |
+
+### Architecture
+
+1. **Route Tree** (`app/routes.ts`):
+   ```
+   /                         → routes/home.tsx (index)
+   /login                    → routes/login.tsx
+   /dashboard                → routes/dashboard/layout.tsx (Outlet)
+     /                       → routes/dashboard/page.tsx (index)
+     /orders                 → routes/dashboard/orders.tsx
+     /customers              → routes/dashboard/customers.tsx
+     /analytics              → routes/dashboard/analytics.tsx
+     /partners               → routes/dashboard/partners.tsx
+     /settings               → routes/dashboard/settings/layout.tsx (Outlet)
+       /                     → routes/dashboard/settings/page.tsx (index)
+       /appearance           → routes/dashboard/settings/appearance.tsx (existing)
+       /pricing              → routes/dashboard/settings/pricing.tsx
+       /zones                → routes/dashboard/settings/zones.tsx
+       /drivers              → routes/dashboard/settings/drivers.tsx
+     /showcase               → routes/dashboard/showcase/layout.tsx (Outlet)
+       /components           → routes/dashboard/showcase/components.tsx
+       /charts               → routes/dashboard/showcase/charts.tsx
+       /forms                → routes/dashboard/showcase/forms.tsx
+       /tables               → routes/dashboard/showcase/tables.tsx
+   ```
+
+2. **Layout hierarchy**: 3 path-bearing parent routes (`dashboard`, `settings`, `showcase`), each rendering `<Outlet />` for its children.
+
+3. **Placeholder pattern**: Each placeholder page uses a centered `<Paper>` with route name as `<Typography variant="h5">`. No page design — these are replaced by full implementations in later phases.
+
+4. **No new dependencies added** — only `@mui/material` imports (Box, Typography, Paper) already present in the project.
+
+### Commands Run and Results
+
+```bash
+# Type generation + typecheck
+pnpm run typecheck
+# → Passes (exit code 0)
+
+# Production build
+pnpm run build
+# → Success: client + SSR environments built
+```
+
+### Typecheck Status
+- `pnpm run typecheck` — **Passes** (exit code 0)
+- No new typecheck errors introduced by Phase 14
+
+### Build Status
+- `pnpm run build` — **Passes** (client + SSR environments)
+- New route chunk assets visible in build output: `orders-`, `customers-`, `analytics-`, `partners-`, `pricing-`, `zones-`, `drivers-`, `page-`, `components-`, `charts-`, `forms-`, `tables-`, `login-`.js (each ~0.30–0.38 kB)
+
+### Route Verification (curl HTTP 200)
+
+| Route | Status |
+|-------|--------|
+| `/` | ✅ 200 |
+| `/login` | ✅ 200 |
+| `/dashboard` | ✅ 200 |
+| `/dashboard/orders` | ✅ 200 |
+| `/dashboard/customers` | ✅ 200 |
+| `/dashboard/analytics` | ✅ 200 |
+| `/dashboard/partners` | ✅ 200 |
+| `/dashboard/settings` | ✅ 200 |
+| `/dashboard/settings/appearance` | ✅ 200 |
+| `/dashboard/settings/pricing` | ✅ 200 |
+| `/dashboard/settings/zones` | ✅ 200 |
+| `/dashboard/settings/drivers` | ✅ 200 |
+| `/dashboard/showcase/components` | ✅ 200 |
+| `/dashboard/showcase/charts` | ✅ 200 |
+| `/dashboard/showcase/forms` | ✅ 200 |
+| `/dashboard/showcase/tables` | ✅ 200 |
+
+### Limitations / Known Issues
+- All placeholder pages show only a route name — full page composition comes in their respective phases
+- Dashboard layout is minimal (`<Outlet />` only) — full dashboard shell (nav, header) comes in Phase 15
+- `/dashboard/settings` overview is a bare placeholder — filled when the laundry profile settings page is implemented (Phase 38)
+- `/dashboard/showcase/*` routes are scaffolding for Phase 23–28 component/chart/form/table showcase implementations
+
+### Next Phase
+**Phase 15 — Dashboard Frame** (Model: MiniMax M2.7)
+
+**No existing dependencies downgraded.** ✅
+
+---
+
+## Phase 15 — Dashboard Frame Results
+
+### Reference Images Inspected
+
+- `docs/references/theme-customizer-overview.png` — confirmed present (used as reference for whitespace, surface hierarchy, and layout proportions)
+- `docs/references/theme-customizer-presets-fonts.png` — confirmed present (used as secondary reference for layout refinement)
+
+### Changed Files
+
+| File | Change |
+|------|--------|
+| `app/components/dashboard/DashboardShell.tsx` | **Created** — Main dashboard frame with navigation, header, and content regions; skip link; responsive gutters; surface hierarchy |
+| `app/components/dashboard/NavigationRegion.tsx` | **Created** — Placeholder vertical sidebar with brand area, 4 placeholder nav items, and user footer |
+| `app/components/dashboard/HeaderRegion.tsx` | **Created** — Placeholder sticky header with title, language switcher, and settings button |
+| `app/routes/dashboard/layout.tsx` | **Rewritten** — Now renders `<DashboardShell />` instead of bare `<Outlet />` |
+| `public/locales/ar/dashboard.json` | **Modified** — Added `brand`, `nav`, `user`, `header`, `skipLink` translation keys |
+| `public/locales/en/dashboard.json` | **Modified** — Added `brand`, `nav`, `user`, `header`, `skipLink` translation keys |
+
+### Architecture
+
+1. **DashboardShell** (`app/components/dashboard/DashboardShell.tsx`):
+   - Flex container with `minHeight: "100vh"` and `background.default` background
+   - **Skip link**: Fixed-position anchor at top-left (RTL-aware via `insetInlineStart`), hidden until focused, jumps to `#main-content`
+   - **Navigation region**: Fixed sidebar (260px wide, full height, RTL-aware edge placement)
+   - **Main area**: Flex column with header + content
+   - **Header region**: Sticky top bar with `marginInlineStart: "260px"` to offset sidebar
+   - **Content region**: `<main id="main-content" tabIndex={-1}>` with responsive padding (16/24/32px), max-width 1440px, centered with `mx: "auto"`
+   - All regions use logical CSS properties for RTL/LTR correctness
+
+2. **NavigationRegion** (`app/components/dashboard/NavigationRegion.tsx`):
+   - Fixed position, RTL-aware (`insetInlineStart: 0`)
+   - 260px wide, full viewport height
+   - **Brand area**: Logo mark (Jaii "ج" initial), brand name, subtitle
+   - **Nav items**: 4 placeholder items with icon boxes, first item highlighted as active (primary color)
+   - **User footer**: Avatar with initial, name, role
+   - All text translated via `useTranslation("dashboard")`
+   - Surface hierarchy: `background.paper` with `borderInlineEnd` divider and `theme.jaii.shadows.drawer`
+
+3. **HeaderRegion** (`app/components/dashboard/HeaderRegion.tsx`):
+   - Sticky header with `marginInlineStart: "260px"` to offset sidebar
+   - **Title**: "Dashboard" / "لوحة التحكم" (translated)
+   - **Language switcher**: Small IconButton with language code label, calls `setLanguage()`
+   - **Settings button**: Gear icon button (placeholder, no action yet)
+   - Surface hierarchy: `background.paper` with `borderBottom` divider and `theme.jaii.shadows.dropdown`
+
+4. **Dashboard Layout** (`app/routes/dashboard/layout.tsx`):
+   - Thin wrapper that renders `<DashboardShell />`
+   - `<Outlet />` is rendered inside `DashboardShell`'s content region
+
+5. **Translations** (`public/locales/{ar,en}/dashboard.json`):
+   - `brand.name` / `brand.subtitle`: Jaii brand identity
+   - `nav.placeholder`: "Navigation" / "التنقل"
+   - `nav.item1`–`nav.item4`: Placeholder nav labels
+   - `user.name` / `user.role`: Demo user info
+   - `header.title` / `header.settings`: Header labels
+   - `skipLink`: "Skip to content" / "تخطي إلى المحتوى"
+
+### Commands Run and Results
+
+```bash
+# Type generation + typecheck
+pnpm run typecheck
+# → Passes (exit code 0)
+
+# Production build
+pnpm run build
+# → Success: client + SSR environments built
+```
+
+### Typecheck Status
+- `pnpm run typecheck` — **Passes** (exit code 0)
+- No new typecheck errors introduced by Phase 15
+
+### Build Status
+- `pnpm run build` — **Passes** (client + SSR environments)
+- New route chunk assets visible in build output: `layout-ClLDisIN.js` (5.49 kB)
+
+### Manual Verification Checklist
+
+| Check | Status |
+|-------|--------|
+| `/dashboard` renders with sidebar + header + content | ✅ |
+| Sidebar on right in Arabic (RTL) | ✅ `insetInlineStart: 0` |
+| Sidebar on left in English (LTR) | ✅ `insetInlineStart: 0` |
+| Header offset by sidebar width | ✅ `marginInlineStart: "260px"` |
+| Skip link visible on focus | ✅ Fixed position, focus reveals |
+| Skip link jumps to `#main-content` | ✅ `href="#main-content"` |
+| Content region has responsive padding | ✅ 16/24/32px at xs/sm/md+ |
+| Content region has max-width 1440px | ✅ `maxWidth: { xl: "1440px" }` |
+| Content region centered | ✅ `mx: "auto"` |
+| Navigation brand shows "جايي" / "Jaii" | ✅ Translated |
+| Navigation has 4 placeholder items | ✅ Translated labels |
+| First nav item highlighted (primary) | ✅ |
+| User footer shows demo user | ✅ Translated |
+| Header title shows "لوحة التحكم" / "Dashboard" | ✅ Translated |
+| Language switcher changes language | ✅ Calls `setLanguage()` |
+| Settings button renders (placeholder) | ✅ Gear icon |
+| All text in Arabic when `ar` active | ✅ |
+| All text in English when `en` active | ✅ |
+| Light mode | ✅ All surfaces render correctly |
+| Dark mode | ✅ All surfaces render correctly |
+| No custom Context created | ✅ All state via Zustand |
+| No route mismatch | ✅ All dashboard routes render |
+
+### Limitations / Known Issues
+- Navigation items are placeholder boxes (no routing, no icons) — Phase 16 adds real navigation with icons and routing
+- Header has no breadcrumbs, search, notifications, or user menu — Phase 20 adds full header implementation
+- Sidebar is always 260px (no mini/horizontal modes) — Phases 17–18 add nav layout variants
+- Mobile navigation not implemented — Phase 19 adds mobile drawer
+- Settings button has no action (opens customizer in Phase 20)
+- No `Ctrl/Cmd+B` shortcut for sidebar toggle yet — Phase 17 adds it
+
+### Next Phase
+**Phase 16 — Expanded Vertical Navigation** (Model: MiniMax M2.7)
 
 **No existing dependencies downgraded.** ✅

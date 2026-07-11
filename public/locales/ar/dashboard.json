@@ -16,5 +16,25 @@
   "recentOrders": "الطلبات الأخيرة",
   "topCustomers": "أفضل العملاء",
   "revenueChart": "رسم الإيرادات",
-  "ordersChart": "رسم الطلبات"
+  "ordersChart": "رسم الطلبات",
+  "brand": {
+    "name": "جايي",
+    "subtitle": "منصة الغسيل"
+  },
+  "nav": {
+    "placeholder": "التنقل",
+    "item1": "لوحة التحكم",
+    "item2": "الطلبات",
+    "item3": "العملاء",
+    "item4": "الإعدادات"
+  },
+  "user": {
+    "name": "مستخدم تجريبي",
+    "role": "مدير المغسلة"
+  },
+  "header": {
+    "title": "لوحة التحكم",
+    "settings": "الإعدادات"
+  },
+  "skipLink": "تخطي إلى المحتوى"
 }
